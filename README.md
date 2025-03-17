@@ -123,7 +123,24 @@ Esto se conoce como **Deadlock**, y es uno de los problemas más recurrentes a l
 
 Para establecer en qué orden los hilos van a acceder a los diferentes recursos del proceso, tenemos que usar `mutex`. `mutex` actua como una especie de semaforo que es capaz de evitar que un hilo acceda a una función mientras otro hilo la esté ejecutando, una protección frente a otros threads.
 
-Para usarla, tenemos que iniciar una estructura `pthread_mutex_t`, iniciarlaza con `pthread_mutex_init` y elegir en qué rango del código queremos implemetnarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
+Para usarla, tenemos que iniciar una estructura `pthread_mutex_t`, iniciarlaza con `pthread_mutex_init` y elegir en qué rango del código queremos implementarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
+
+```c
+pthread_mutex_t your_mutex;
+
+int pthread_mutex_init(
+    pthread_mutex_t *mutex,
+    const pthread_mutexattr_t *attr);
+
+int pthread_mutex_lock(
+    pthread_mutex_t *mutex);
+
+int pthread_mutex_unlock(
+    pthread_mutex_t *mutex);
+
+int pthread_mutex_destroy(
+    pthread_mutex_t *mutex);
+```
 
 <details>
 <summary>🔍 Ejemplo de código</summary>
@@ -184,3 +201,8 @@ int main(int argc, char* argv[]) {
 - [Unix Threads in C (lista de reproducción, empieza por aquí)](https://www.youtube.com/watch?v=d9s_d28yJq0&list=PLfqABt5AS4FmuQf70psXrsMLEDQXNkLq2)
 - [The Dining Philosophers Problem](https://www.youtube.com/watch?v=FYUi-u7UWgw)
 - [The dining Philosophers in C: threads, race conditions and deadlocks #codewithme](https://www.youtube.com/watch?v=zOpzGHwJ3MU)
+
+### Artículos
+- [Philosophers 42 Guide— “The Dining Philosophers Problem”](https://medium.com/@ruinadd/philosophers-42-guide-the-dining-philosophers-problem-893a24bc0fe2)
+- [Philosophers 42 Guide](https://42-cursus.gitbook.io/guide/rank-03/philosophers)
+- [Philosophers — Dining Philosophers problem. 42 project guide — Mandatory part](https://medium.com/@denaelgammal/dining-philosophers-problem-42-project-guide-mandatory-part-a20fb8dc530e)
