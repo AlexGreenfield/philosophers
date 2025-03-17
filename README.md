@@ -49,8 +49,6 @@ int main(int argc, char* argv[]) {
 ```
 </details>
 
-&nbsp;
-
 Pero al igual que con `fork`, tenemos que indicarle al proceso que espere a que estos hilos terminen de ejecutarse antes de acabar la ejecución del programa, si no puede que se queden con tareas pendientes por hacer. Para ello utilizamos `pthread_join` (muy parecida a `wait`).  Al igual que `pthread_create`, devuelve flag en caso de error, lo que podemos usar como mecanismo de control.
 
 ```c
