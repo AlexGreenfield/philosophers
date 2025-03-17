@@ -18,7 +18,11 @@ Para crear un proceso, podemos usar la librería `pthread.h` y la función `pthr
 
 pthread_t*;
 
-int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg);
+int pthread_create(
+    pthread_t *thread,
+    const pthread_attr_t *attr,
+    void *(*start_routine) (void *),
+    void *arg);
 ```
 
 Para manejar `pthread`, primero necesitamos una estructura `pthread_t` que aloje la información sobre nuestro hilo, como su id. `pthread_create` es el encargado de crear un nuevo hilo, darle una id y ejecutar una función (llamada routine) en concreto. En error, `pthread_create` devuelve una flag con el error, lo que se puede usar como mecanismo de control.
@@ -54,7 +58,9 @@ Pero al igual que con `fork`, tenemos que indicarle al proceso que espere a que 
 ```c
 #include <pthread.h>
 
-int pthread_join(pthread_t thread, void **retval);
+int pthread_join(
+    pthread_t thread,
+    void **retval);
 ```
 
 <details>
@@ -119,6 +125,9 @@ Para establecer en qué orden los hilos van a acceder a los diferentes recursos 
 
 Para usarla, tenemos que iniciar una estructura `pthread_mutex_t`, iniciarlaza con `pthread_mutex_init` y elegir en qué rango del código queremos implemetnarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
 
+<details>
+<summary>🔍 Ejemplo de código</summary>
+
 ```c
 #include <stdlib.h>
 #include <stdio.h>
@@ -167,7 +176,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 ```
-
+</details>
 
 ## Videos y bibliografía
 
