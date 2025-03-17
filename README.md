@@ -23,6 +23,9 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_
 
 Para manejar `pthread`, primero necesitamos una estructura `pthread_t` que aloje la información sobre nuestro hilo, como su id. `pthread_create` es el encargado de crear un nuevo hilo, darle una id y ejecutar una función (llamada routine) en concreto. En error, `pthread_create` devuelve una flag con el error, lo que se puede usar como mecanismo de control.
 
+<details>
+<summary>🔍 Ejemplo de código</summary>
+
 ```c
 #include <pthread.h>
 #include <unistd.h>
@@ -44,14 +47,20 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 ```
+</details>
+
+&nbsp;
+
 Pero al igual que con `fork`, tenemos que indicarle al proceso que espere a que estos hilos terminen de ejecutarse antes de acabar la ejecución del programa, si no puede que se queden con tareas pendientes por hacer. Para ello utilizamos `pthread_join` (muy parecida a `wait`).  Al igual que `pthread_create`, devuelve flag en caso de error, lo que podemos usar como mecanismo de control.
 
 ```c
-     #include <pthread.h>
+#include <pthread.h>
 
-       int pthread_join(pthread_t thread, void **retval);
+int pthread_join(pthread_t thread, void **retval);
 ```
-El codigo completo se nos quedaría así.
+
+<details>
+<summary>🔍 Ejemplo de código</summary>
 
 ```c
 #include <pthread.h>
@@ -78,6 +87,8 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 ```
+</details>
+
 ### ¿En qué se diferencia de un proceso?
 
 Cada proceso tiene asociados una serie de recursos asignados, como puede ser el stack o su registro, pero también otros elementos como las señales o el acceso a diferentes archivos y sus descriptores. Por ejemplo, usando varios procesos usando `fork`, si desde un proceso abrimos un file descriptor, no podremos acceder a él desde otro proceso. O si cambiamos una variable, su valor sólo se modificará dentro de ese mismo proceso, no afectará al conjunto del programa. Es decir, que una vez creados los procesos no comparten los mismos recursos entre entre ellos, si no que el sistema aloja unos nuevos recursos para cada proceso de manera individual.
@@ -100,7 +111,7 @@ En resumen, dependiendo del contexto es más útil utilizar uno u otro teniendo 
 
 ### ¿Qué son las Race Conditions y como gestionarlas?
 
-Que los threads compartan recursos es una ventaja... pero también puede suponer un problema si dos hilos quieren acceder al mismo recurso a la vez. Esto es lo que se conoce como Race Conditions: cuando varios hilos intentan acceder al mismo recurso a la vez y se tienen que decidir las condiciones y el orden en el que los hilos van a acceder a este recurso. La mala gestión de estas condiciones puede llevbaar a que sólo un hilo llegue a acceder a uno de estos recursos y nunca lo suelte, por lo que el resto de hilos se quedarán esperando hasta que esté liberado (osease, hasta el infinito). 
+Que los threads compartan recursos es una ventaja... pero también puede suponer un problema si dos hilos quieren acceder al mismo recurso a la vez. Esto es lo que se conoce como Race Conditions: cuando varios hilos intentan acceder al mismo recurso a la vez y se tienen que decidir las condiciones y el orden en el que los hilos van a acceder a este recurso. La mala gestión de estas condiciones puede llevbaar a que sólo un hilo llegue a acceder a uno de estos recursos y nunca lo suelte, por lo que el resto de hilos se quedarán esperando hasta que esté liberado (osease, hasta el infinito).
 
 Esto se conoce como **Deadlock**, y es uno de los problemas más recurrentes a la hora de utilizar varios hilos.
 
