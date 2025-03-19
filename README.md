@@ -9,7 +9,7 @@ Un hilo se trata de la unidad de ejecución más pequeña dentro de un proceso. 
 
 ![Single Thread vs Multi Thread](imgs/thread1.png)
 
-Sin embargo, no hay que dejarse engañar. Los hilos normalmente no se ejecutan totalmente en paralelo de manera real, si no que que se ejecutan concurrentemente, alternando rápidamente entre ellos para que de la sensación de que se están ejecutando de manera paralela e independiente. Para que se puedan ejecutar de manera paralela de forma real, es necesario que la CPU cuente con varios nucleos. Sólo así se puede asegurar que los hilos se ejecutan de manera paralela y no haya conflictos (spoiler, este proyecto trata de solventar estos conflictos).
+Sin embargo, no hay que dejarse engañar. Los hilos normalmente no se ejecutan totalmente en paralelo de manera real, si no que se van alternando rápidamente entre ellos para que de la sensación de que se están ejecutando de manera paralela e independiente. Para que se puedan ejecutar de manera paralela de forma real es necesario que la CPU cuente con varios nucleos. Sólo así se puede asegurar que los hilos se ejecutan simultaneamente.
 
 Para crear un proceso, podemos usar la librería `pthread.h` y la función `pthread_create`.
 
@@ -25,7 +25,7 @@ int pthread_create(
     void *arg);
 ```
 
-Para manejar `pthread`, primero necesitamos una estructura `pthread_t` que aloje la información sobre nuestro hilo, como su id. `pthread_create` es el encargado de crear un nuevo hilo, darle una id y ejecutar una función (llamada routine) en concreto. En error, `pthread_create` devuelve una flag con el error, lo que se puede usar como mecanismo de control.
+Para manejar `pthread`, primero necesitamos una estructura `pthread_t` que aloje la información sobre nuestro hilo, como su id. `pthread_create` es el encargado de crear un nuevo hilo, darle una id y ejecutar una función (llamada routine) en concreto. En error, `pthread_create` devuelve una flag, lo que se puede usar como mecanismo de control.
 
 <details>
 <summary>🔍 Ejemplo de código</summary>
@@ -42,18 +42,17 @@ void* routine() {
 
 int main(int argc, char* argv[]) {
     pthread_t p1;
-    pthread_t p2;
 
     if (pthread_create(&p1, NULL, &routine, NULL) != 0)
         return 1;
-    if (pthread_create(&p2, NULL, &routine, NULL) != 0)
-        return 2;
     return 0;
 }
 ```
 </details>
 
-Pero al igual que con `fork`, tenemos que indicarle al proceso que espere a que estos hilos terminen de ejecutarse antes de acabar la ejecución del programa, si no puede que se queden con tareas pendientes por hacer. Para ello utilizamos `pthread_join` (muy parecida a `wait`).  Al igual que `pthread_create`, devuelve flag en caso de error, lo que podemos usar como mecanismo de control.
+<br>
+
+Pero al igual que con `fork`, tenemos que indicarle al proceso que espere a que estos hilos terminen de ejecutarse antes de acabar la ejecución del programa, si no puede que se queden con tareas pendientes por hacer. Para ello utilizamos `pthread_join` (muy parecida a `wait`). Al igual que `pthread_create`, `pthread_join` devuelve flag en caso de error, lo que podemos usar como mecanismo de control.
 
 ```c
 #include <pthread.h>
@@ -78,24 +77,19 @@ void* routine() {
 
 int main(int argc, char* argv[]) {
     pthread_t p1;
-    pthread_t p2;
 
     if (pthread_create(&p1, NULL, &routine, NULL) != 0)
         return 1;
-    if (pthread_create(&p2, NULL, &routine, NULL) != 0)
-        return 2;
 	if (pthread_join(p1, NULL) != 0)
-        return 3;
-    if (pthread_join(p2, NULL) != 0)
-        return 4;
+        return 2;
     return 0;
 }
 ```
 </details>
 
-### ¿En qué se diferencia de un proceso?
+### ¿En qué se diferencia un hilo de un proceso?
 
-Cada proceso tiene asociados una serie de recursos asignados, como puede ser el stack o su registro, pero también otros elementos como las señales o el acceso a diferentes archivos y sus descriptores. Por ejemplo, usando varios procesos usando `fork`, si desde un proceso abrimos un file descriptor, no podremos acceder a él desde otro proceso. O si cambiamos una variable, su valor sólo se modificará dentro de ese mismo proceso, no afectará al conjunto del programa. Es decir, que una vez creados los procesos no comparten los mismos recursos entre entre ellos, si no que el sistema aloja unos nuevos recursos para cada proceso de manera individual.
+Cada proceso tiene asociados una serie de recursos asignados, como puede ser el stack o su registro, pero también otros elementos como las señales del sistema o el acceso a diferentes archivos y sus file descriptors. Por ejemplo, si desde una llamada a `fork` abrimos un file descriptor, no podremos acceder a él desde otro proceso. O si cambiamos una variable, su valor sólo se modificará dentro de ese `fork`, no afectará al conjunto del programa. Es decir, que una vez creados los procesos no comparten los mismos recursos entre entre ellos, sino que el sistema aloja unos nuevos recursos para cada proceso de manera individual.
 
 ![Processes don't share resources and it's harder for them to communicate](imgs/thread2.png)
 
@@ -113,9 +107,200 @@ En resumen, dependiendo del contexto es más útil utilizar uno u otro teniendo 
 | **Fallos**          | No afecta a otros procesos        | Puede afectar a otros hilos del proceso |
 | **Uso**             | Programas independientes          | Tareas simultáneas dentro de un programa |
 
-### ¿Qué son las Race Conditions y como gestionarlas?
+### Obtener el valor de retorno de un hilo
 
-Que los threads compartan recursos es una ventaja... pero también puede suponer un problema si dos hilos quieren acceder al mismo recurso a la vez. Esto es lo que se conoce como Race Conditions: cuando varios hilos intentan acceder al mismo recurso a la vez y se tienen que decidir las condiciones y el orden en el que los hilos van a acceder a este recurso. La mala gestión de estas condiciones puede llevbaar a que sólo un hilo llegue a acceder a uno de estos recursos y nunca lo suelte, por lo que el resto de hilos se quedarán esperando hasta que esté liberado (osease, hasta el infinito).
+Uno de los puntos fuertes de los hilos es que, al compartir los mismos recursos que el proceso principal, es mucho más fácil obtener valores de retorno. Mientras que en un `fork` tendríamos que abrir un `pipe` para que ambos procesos se comunicen entre sí, con los hilos podemos obtener estos valores dentro de la propia llamada a `thread`.
+
+Como has podido ver, el segundo valor de `pthread_create` es una función que devuelve un `void *` (recuerda que se pueden usar como cualquier valor con un casteo, como un `char *` o un `int *`). Para retornar y obtener el valor de esta función tenemos que usar el segundo argumento de `pthread_join`, `**retval`. Es decir, que obtenemos una dirección de memoria a un puntero (de ahí que emplee `**` y no sólo `*`). 
+
+El gran problema que tenemos a la hora de usar punteros de esta forma es que las variables que creemos dentro de la función del hilo se generan en el `stack`, por lo que al acabarse el hilo esa dirección de memoria se va a dealocar y nos va a dar un error. Por eso es importante que los valores que queramos devolver de una función usando hilos estén alojados con `malloc`.
+
+<details>
+<summary>🔴 Código erróneo retornando una variable local</summary>
+
+```c
+#include <stdio.h>
+#include <pthread.h>
+
+void* thread_function(void* arg) {
+    int result = 42;  // Local variable (stored on stack)
+    return &result;   // WARNING: Returning address of local variable
+}
+
+int main() {
+    pthread_t thread;
+    int* thread_result;
+
+    // Create the thread
+    if (pthread_create(&thread, NULL, thread_function, NULL) != 0) {
+        perror("Failed to create thread");
+        return 1;
+    }
+
+    // Wait for the thread to finish and retrieve the result
+    if (pthread_join(thread, (void**)&thread_result) != 0) {
+        perror("Failed to join thread");
+        return 1;
+    }
+
+    // Print the result (this will likely be garbage or crash)
+    printf("Thread returned: %d\n", *thread_result);  // Undefined behavior!
+
+    return 0;
+}
+```
+</details>
+
+<br>
+
+<details>
+<summary>✅ Código correcto, alojando dinámicamente el resultado de una variable local</summary>
+
+```c
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+
+void* thread_function(void* arg) {
+    int* result = malloc(sizeof(int));  // Allocate memory on the heap
+    *result = 42;  // Store the value
+    return result;  // Return the allocated memory
+}
+
+int main() {
+    pthread_t thread;
+    int* thread_result;
+
+    // Create the thread
+    if (pthread_create(&thread, NULL, thread_function, NULL) != 0) {
+        perror("Failed to create thread");
+        return 1;
+    }
+
+    // Wait for the thread to finish and retrieve the result
+    if (pthread_join(thread, (void**)&thread_result) != 0) {
+        perror("Failed to join thread");
+        return 1;
+    }
+
+    // Print the result
+    printf("Thread returned: %d\n", *thread_result);
+
+    // Free the allocated memory
+    free(thread_result);
+
+    return 0;
+}
+```
+</details>
+
+En este ejemplo la alocación de la memoria tiene lugar dentro de la rutina, mientras que la liberación de la memoria se hace en el main. Esto es una mala práctica (puede llevar a errores, hasta que no llegas al free no sabes result está alojado dinamicamente en otra función), así que lo mejor es pasar nuestras variables como un argumento para la rutina.
+
+### Cómo pasar argumentos a un hilo
+
+El cuarto argumento de `pthread_create` es un `void *`, por lo que podemos usar un puntero o la dirección de memoria de una variable para pasar toda la información necesaria a nuestra rutina a través de una estructura, por ejemplo. Recuerda siempre castear este `void *` al tipo que necesites dentro de la rutina para evitar warnigns en el compilador.
+
+<details>
+<summary>🔍 Ejemplo de código</summary>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+// Thread function
+void* print_number(void* arg) {
+    int num = *((int*)arg);  // Cast and dereference the argument
+    printf("Thread received number: %d\n", num);
+    return NULL;
+}
+
+int main() {
+    pthread_t thread;
+    int value = 42;  // The argument to pass
+
+    // Create a new thread and pass the address of 'value'
+    if (pthread_create(&thread, NULL, print_number, &value) != 0) {
+        perror("Failed to create thread");
+        return 1;
+    }
+
+    // Wait for the thread to finish
+    pthread_join(thread, NULL);
+    return 0;
+}
+```
+</details>
+
+Si juntamos la capacidad de pasar argumentos a la rutina con `pthread_create` y retornando su valor con `pthread_join`, nuestro código ya va cogiendo forma.
+
+<details>
+<summary>🔍 Ejemplo de código</summary>
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+// Thread function
+void* return_number(void* arg) {
+    int num = *((int*)arg);  // Cast and dereference the argument
+    int* result = malloc(sizeof(int));  // Allocate memory for return value
+    *result = num * 2;  // Example: Modify the number
+    return (void*)result;
+}
+
+int main() {
+    pthread_t thread;
+    int value = 42;  // The argument to pass
+    int* thread_result;
+
+    // Create a new thread and pass the address of 'value'
+    if (pthread_create(&thread, NULL, return_number, &value) != 0) {
+        perror("Failed to create thread");
+        return 1;
+    }
+
+    // Wait for the thread to finish and retrieve the returned value
+    if (pthread_join(thread, (void**)&thread_result) != 0) {
+        perror("Failed to join thread");
+        return 1;
+    }
+
+    // Print the returned value
+    printf("Main received number from thread: %d\n", *thread_result);
+
+    // Free allocated memory
+    free(thread_result);
+
+    return 0;
+}
+```
+</details>
+
+### Manejando varios hilos: qué son las Race Conditions y cómo gestionar recursos con Mutex
+
+Que los threads compartan recursos es una ventaja... pero también puede suponer un problema si dos hilos quieren acceder al mismo recurso a la vez, como una variable. Esto es lo que se conoce como Race Conditions: cuando varios hilos intentan acceder al mismo recurso a la vez y se tienen que decidir las condiciones y el orden en el que los hilos van a acceder a este recurso. 
+
+Por ejemplo, si varios hilos intentan acceder a una misma variable, puede que modifiquen su valor de manera desordenada, lo que hace que el programa no funcione como se espera. Un ejemplo, en un programa en el que un hilo suma 300$ a una cuenta y otro hilo suma 200$, puede que el segundo hilo lea el valor total de la cuenta antes de que al primer hilo le de tiempo a cambiar su valor, por lo que sumará erroneamente el valor total.
+
+| Thread #1                | Thread #2                | Bank Balance |
+|--------------------------|--------------------------|--------------|
+| Read Balance  <-----------|                          | 0            |
+| balance = 0               |                          |              |
+|                          | Read Balance  <-----------| 0            |
+|                          | balance = 0              |              |
+| Deposit +300              |                          | 300          |
+| balance = 300             |                          |              |
+|                          | Deposit +200             | 200          |
+|                          | balance = 200            |              |
+| Write Balance  ---------->|                          | 300          |
+| balance = 300             |                          |              |
+|                          | Write Balance  --------->| 200          |
+|                          | balance = 200            |              |
+
+
+La mala gestión de estas condiciones también puede llevar a que un hilo llegue a acceder a uno de estos recursos y nunca lo suelte, por lo que el resto de hilos se quedarán esperando hasta que esté liberado (osease, hasta el infinito).
 
 Esto se conoce como **Deadlock**, y es uno de los problemas más recurrentes a la hora de utilizar varios hilos.
 
@@ -123,7 +308,7 @@ Esto se conoce como **Deadlock**, y es uno de los problemas más recurrentes a l
 
 Para establecer en qué orden los hilos van a acceder a los diferentes recursos del proceso, tenemos que usar `mutex`. `mutex` actua como una especie de semaforo que es capaz de evitar que un hilo acceda a una función mientras otro hilo la esté ejecutando, una protección frente a otros threads.
 
-Para usarla, tenemos que iniciar una estructura `pthread_mutex_t`, iniciarlaza con `pthread_mutex_init` y elegir en qué rango del código queremos implementarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
+Para usarla, tenemos que  declarar una estructura `pthread_mutex_t`, inicializarla con `pthread_mutex_init` y elegir en qué rango del código queremos implementarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
 
 ```c
 pthread_mutex_t your_mutex;
@@ -192,8 +377,10 @@ int main(int argc, char* argv[]) {
     printf("Number of mails: %d\n", mails);
     return 0;
 }
-```
+``
 </details>
+
+<br>
 
 ## Videos y bibliografía
 
