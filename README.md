@@ -377,7 +377,7 @@ int main(int argc, char* argv[]) {
     printf("Number of mails: %d\n", mails);
     return 0;
 }
-``
+```
 </details>
 
 <br>
