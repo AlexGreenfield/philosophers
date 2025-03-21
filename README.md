@@ -1,7 +1,21 @@
 # Philosophers
 42 project for learning algorithms and synchronization problems
 
-## Paralelismo vs Concurrencia
+* 1. [Paralelismo vs Concurrencia](#ParalelismovsConcurrencia)
+* 2. [Procesos e hilos](#Procesosehilos)
+	* 2.1. [¿Qué es un hilo?](#Quesunhilo)
+	* 2.2. [¿En qué se diferencia un hilo de un proceso?](#Enqusediferenciaunhilodeunproceso)
+	* 2.3. [Obtener el valor de retorno de un hilo](#Obtenerelvalorderetornodeunhilo)
+	* 2.4. [Cómo pasar argumentos a un hilo](#Cmopasarargumentosaunhilo)
+	* 2.5. [Manejando varios hilos: qué son las Race Conditions y cómo gestionar recursos con Mutex](#Manejandovarioshilos:qusonlasRaceConditionsycmogestionarrecursosconMutex)
+	* 2.6. [Separar hilos y optimizar recursos](#Separarhilosyoptimizarrecursos)
+* 3. [Notas y consejos](#Notasyconsejos)
+* 4. [Videos y bibliografía](#Videosybibliografa)
+	* 4.1. [Vídeos](#Vdeos)
+	* 4.2. [Artículos](#Artculos)
+	* 4.3. [Recursos](#Recursos)
+
+##  1. <a name='ParalelismovsConcurrencia'></a>Paralelismo vs Concurrencia
 
 Lo primero de todo, el problema de los filosofos explicado por una de mis series favoritas, [Pantheon](https://www.netflix.com/es-en/title/81937398) (hazte un favor, haz click en la imagen y miratela).
 
@@ -19,9 +33,9 @@ Pero en la concurrencia, aún habiendo dos filas, hay sólo una máquina. Por lo
 
 ![Concurrency vs Parallelism](imgs/parallelism.png)
 
-## Procesos e hilos
+##  2. <a name='Procesosehilos'></a>Procesos e hilos
 
-### ¿Qué es un hilo?
+###  2.1. <a name='Quesunhilo'></a>¿Qué es un hilo?
 
 Un hilo se trata de la unidad de ejecución más pequeña dentro de un proceso. Es decir, cuando lanzamos un hilo en nuestro código estamos diciendole a nuestro programa que realize una serie de acciones de manera "simultanea" a nuestro proceso principal, lo que nos permite llamar a otras funciones dentro del orden de ejecución de nuestro programa. Para resumir, si pensamos en la ejecución normal de nuestro programa como el hilo principal, el uso de multiples hilos nos permite ejecutar otras funciones a la par.
 
@@ -41,6 +55,12 @@ int pthread_create(
     const pthread_attr_t *attr,
     void *(*start_routine) (void *),
     void *arg);
+```
+
+También es necesario usar la flag `-pthread` a la hora de compilar con cc.
+
+```
+cc philo.c -pthread
 ```
 
 Para manejar `pthread`, primero necesitamos una estructura `pthread_t` que aloje la información sobre nuestro hilo, como su id. `pthread_create` es el encargado de crear un nuevo hilo, darle una id y ejecutar una función (llamada routine) en concreto. En error, `pthread_create` devuelve una flag, lo que se puede usar como mecanismo de control.
@@ -105,7 +125,7 @@ int main(int argc, char* argv[]) {
 ```
 </details>
 
-### ¿En qué se diferencia un hilo de un proceso?
+###  2.2. <a name='Enqusediferenciaunhilodeunproceso'></a>¿En qué se diferencia un hilo de un proceso?
 
 Cada proceso tiene asociados una serie de recursos asignados, como puede ser el stack o su registro, pero también otros elementos como las señales del sistema o el acceso a diferentes archivos y sus file descriptors. Por ejemplo, si desde una llamada a `fork` abrimos un file descriptor, no podremos acceder a él desde otro proceso. O si cambiamos una variable, su valor sólo se modificará dentro de ese `fork`, no afectará al conjunto del programa. Es decir, que una vez creados los procesos no comparten los mismos recursos entre entre ellos, sino que el sistema aloja unos nuevos recursos para cada proceso de manera individual.
 
@@ -125,7 +145,7 @@ En resumen, dependiendo del contexto es más útil utilizar uno u otro teniendo 
 | **Fallos**          | No afecta a otros procesos        | Puede afectar a otros hilos del proceso |
 | **Uso**             | Programas independientes          | Tareas simultáneas dentro de un programa |
 
-### Obtener el valor de retorno de un hilo
+###  2.3. <a name='Obtenerelvalorderetornodeunhilo'></a>Obtener el valor de retorno de un hilo
 
 Uno de los puntos fuertes de los hilos es que, al compartir los mismos recursos que el proceso principal, es mucho más fácil obtener valores de retorno. Mientras que en un `fork` tendríamos que abrir un `pipe` para que ambos procesos se comunicen entre sí, con los hilos podemos obtener estos valores dentro de la propia llamada a `thread`.
 
@@ -212,9 +232,11 @@ int main() {
 ```
 </details>
 
+<br>
+
 En este ejemplo la alocación de la memoria tiene lugar dentro de la rutina, mientras que la liberación de la memoria se hace en el main. Esto es una mala práctica (puede llevar a errores, hasta que no llegas al free no sabes result está alojado dinamicamente en otra función), así que lo mejor es pasar nuestras variables como un argumento para la rutina.
 
-### Cómo pasar argumentos a un hilo
+###  2.4. <a name='Cmopasarargumentosaunhilo'></a>Cómo pasar argumentos a un hilo
 
 El cuarto argumento de `pthread_create` es un `void *`, por lo que podemos usar un puntero o la dirección de memoria de una variable para pasar toda la información necesaria a nuestra rutina a través de una estructura, por ejemplo. Recuerda siempre castear este `void *` al tipo que necesites dentro de la rutina para evitar warnigns en el compilador.
 
@@ -249,6 +271,8 @@ int main() {
 }
 ```
 </details>
+
+<br>
 
 Si juntamos la capacidad de pasar argumentos a la rutina con `pthread_create` y retornando su valor con `pthread_join`, nuestro código ya va cogiendo forma.
 
@@ -296,11 +320,11 @@ int main() {
 ```
 </details>
 
-### Manejando varios hilos: qué son las Race Conditions y cómo gestionar recursos con Mutex
+###  2.5. <a name='Manejandovarioshilos:qusonlasRaceConditionsycmogestionarrecursosconMutex'></a>Manejando varios hilos: qué son las Race Conditions y cómo gestionar recursos con Mutex
 
 Que los threads compartan recursos es una ventaja... pero también puede suponer un problema si dos hilos quieren acceder al mismo recurso a la vez, como una variable. Esto es lo que se conoce como Race Conditions: cuando varios hilos intentan acceder al mismo recurso a la vez y se tienen que decidir las condiciones y el orden en el que los hilos van a acceder a este recurso.
 
-Por ejemplo, si varios hilos intentan acceder a una misma variable, puede que modifiquen su valor de manera desordenada, lo que hace que el programa no funcione como se espera. Un ejemplo, en un programa en el que un hilo suma 300$ a una cuenta y otro hilo suma 200$, puede que el segundo hilo lea el valor total de la cuenta antes de que al primer hilo le de tiempo a cambiar su valor, por lo que sumará erroneamente el valor total.
+Por ejemplo, si varios hilos intentan acceder a una misma variable, puede que modifiquen su valor de manera desordenada, lo que hace que el programa no funcione como se espera. Un ejemplo, en un programa en el que un hilo suma 300$ a una cuenta y otro hilo suma 200$, puede que el segundo hilo lea el valor total de la cuenta antes de que al primer hilo le de tiempo a cambiar su valor, por lo que sumará erroneamente el valor total (fuente: [Dean Ruina](https://medium.com/@ruinadd/philosophers-42-guide-the-dining-philosophers-problem-893a24bc0fe2))
 
 | Thread #1                | Thread #2                | Bank Balance |
 |--------------------------|--------------------------|--------------|
@@ -317,14 +341,80 @@ Por ejemplo, si varios hilos intentan acceder a una misma variable, puede que mo
 |                          | Write Balance  --------->| 200          |
 |                          | balance = 200            |              |
 
+<details>
+<summary>🔍 Ejemplo de código</summary>
 
-La mala gestión de estas condiciones también puede llevar a que un hilo llegue a acceder a uno de estos recursos y nunca lo suelte, por lo que el resto de hilos se quedarán esperando hasta que esté liberado (osease, hasta el infinito).
+```c
+#include <unistd.h>
+#include <stdio.h>
+#include <pthread.h>
 
-Esto se conoce como **Deadlock**, y es uno de los problemas más recurrentes a la hora de utilizar varios hilos.
+// the initial balance is 0
+int balance = 0;
 
-![Deadlock state where two process are waiting indefinitely](imgs/thread4.jpg)
+// write the new balance (after as simulated 1/4 second delay)
+void write_balance(int new_balance)
+{
+  usleep(250000);
+  balance = new_balance;
+}
 
-Para establecer en qué orden los hilos van a acceder a los diferentes recursos del proceso, tenemos que usar `mutex`. `mutex` actua como una especie de semaforo que es capaz de evitar que un hilo acceda a una función mientras otro hilo la esté ejecutando, una protección frente a otros threads.
+// returns the balance (after a simulated 1/4 second delay)
+int read_balance()
+{
+  usleep(250000);
+  return balance;
+}
+
+// carry out a deposit
+void* deposit(void *amount)
+{
+  // retrieve the bank balance
+  int account_balance = read_balance();
+
+  // make the update locally
+  account_balance += *((int *) amount);
+
+  // write the new bank balance
+  write_balance(account_balance);
+
+  return NULL;
+}
+
+int main()
+{
+  // output the balance before the deposits
+  int before = read_balance();
+  printf("Before: %d\n", before);
+
+  // we'll create two threads to conduct a deposit using the deposit function
+  pthread_t thread1;
+  pthread_t thread2;
+
+  // the deposit amounts... the correct total afterwards should be 500
+  int deposit1 = 300;
+  int deposit2 = 200;
+
+  // create threads to run the deposit function with these deposit amounts
+  pthread_create(&thread1, NULL, deposit, (void*) &deposit1);
+  pthread_create(&thread2, NULL, deposit, (void*) &deposit2);
+
+  // join the threads
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
+
+  // output the balance after the deposits
+  int after = read_balance();
+  printf("After: %d\n", after);
+
+  return 0;
+}
+```
+</details>
+
+<br>
+
+Para solucionar este problema y establecer en qué orden los hilos van a acceder a los diferentes recursos del proceso, tenemos que usar `mutex`. `mutex` actua como una especie de semaforo que es capaz de evitar que un hilo acceda a una función mientras otro hilo la esté ejecutando, una protección frente a otros threads.
 
 Para usarla, tenemos que  declarar una estructura `pthread_mutex_t`, inicializarla con `pthread_mutex_init` y elegir en qué rango del código queremos implementarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
 
@@ -345,54 +435,169 @@ int pthread_mutex_destroy(
     pthread_mutex_t *mutex);
 ```
 
+| Thread #1             | Thread #2              | Bank Balance |
+|-----------------------|------------------------|--------------|
+|                       | **LOCK**               |              |
+| WAIT @ LOCK           | Read Balance <---------| 0            |
+|                       | balance = 0            |              |
+|                       | Deposit +200           |              |
+|                       | balance = 200          |              |
+|                       | Write Balance -------->| 200          |
+|                       | balance = 200          |              |
+| LOCK FREE             | **UNLOCK**             |              |
+| **LOCK**              |                        |              |
+| Read Balance <--------| 200                    |              |
+| balance = 0           |                        |              |
+| Deposit +300          |                        |              |
+| balance = 500         |                        |              |
+| Write Balance ------->| 500                    |              |
+| balance = 500         |                        |              |
+| **UNLOCK**            |                        |              |
+
 <details>
 <summary>🔍 Ejemplo de código</summary>
 
 ```c
-#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <pthread.h>
 
-int mails = 0;
-pthread_mutex_t mutex; // Struct for mutex
+// the initial balance is 0
+int balance = 0;
 
-void* routine() {
-    for (int i = 0; i < 10000000; i++) {
-        pthread_mutex_lock(&mutex); // Start of the area we want to protect
-        mails++;
-        pthread_mutex_unlock(&mutex); // End of mutex
-    }
+// write the new balance (after as simulated 1/4 second delay)
+void write_balance(int new_balance)
+{
+  usleep(250000);
+  balance = new_balance;
 }
 
-int main(int argc, char* argv[]) {
-    pthread_t p1, p2, p3, p4;
-    pthread_mutex_init(&mutex, NULL); // We init mutex in main
-    if (pthread_create(&p1, NULL, &routine, NULL) != 0) {
-        return 1;
-    }
-    if (pthread_create(&p2, NULL, &routine, NULL) != 0) {
-        return 2;
-    }
-    if (pthread_create(&p3, NULL, &routine, NULL) != 0) {
-        return 3;
-    }
-    if (pthread_create(&p4, NULL, &routine, NULL) != 0) {
-        return 4;
-    }
-    if (pthread_join(p1, NULL) != 0) {
-        return 5;
-    }
-    if (pthread_join(p2, NULL) != 0) {
-        return 6;
-    }
-    if (pthread_join(p3, NULL) != 0) {
-        return 7;
-    }
-    if (pthread_join(p4, NULL) != 0) {
-        return 8;
-    }
-    pthread_mutex_destroy(&mutex); // We free our mutex struct
-    printf("Number of mails: %d\n", mails);
+// returns the balance (after a simulated 1/4 seond delay)
+int read_balance()
+{
+  usleep(250000);
+  return balance;
+}
+
+// carry out a deposit
+void* deposit(void *amount)
+{
+  // lock the mutex
+  pthread_mutex_lock(&mutex);
+
+  // retrieve the bank balance
+  int account_balance = read_balance();
+
+  // make the update locally
+  account_balance += *((int *) amount);
+
+  // write the new bank balance
+  write_balance(account_balance);
+
+  // unlock to make the critical section available to other threads
+  pthread_mutex_unlock(&mutex);
+
+  return NULL;
+}
+
+int main()
+{
+  // mutex variable
+  pthread_mutex_t mutex;
+
+  // output the balance before the deposits
+  int before = read_balance();
+  printf("Before: %d\n", before);
+
+  // we'll create two threads to conduct a deposit using the deposit function
+  pthread_t thread1;
+  pthread_t thread2;
+
+  // initialize the mutex
+  pthread_mutex_init(&mutex, NULL);
+
+  // the deposit amounts... the correct total afterwards should be 500
+  int deposit1 = 300;
+  int deposit2 = 200;
+
+  // create threads to run the deposit function with these deposit amounts
+  pthread_create(&thread1, NULL, deposit, (void*) &deposit1);
+  pthread_create(&thread2, NULL, deposit, (void*) &deposit2);
+
+  // join the threads
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
+
+   // destroy the mutex
+  pthread_mutex_destroy(&mutex);
+
+  // output the balance after the deposits
+  int after = read_balance();
+  printf("After: %d\n", after);
+
+  return 0;
+}
+```
+</details>
+
+<br>
+
+Pero la mala gestión de `mutex` también puede llevar a que un hilo llegue a acceder a uno de estos recursos y nunca lo suelte, por lo que el resto de hilos se quedarán esperando hasta que esté liberado (osease, hasta el infinito). Esto se conoce como **Deadlock**, y es uno de los problemas más recurrentes a la hora de utilizar varios hilos.
+
+![Deadlock state where two process are waiting indefinitely](imgs/thread4.jpg)
+
+<details>
+<summary>🔍 Ejemplo de código</summary>
+
+```c
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
+
+pthread_mutex_t lock1;
+pthread_mutex_t lock2;
+
+void *thread1_func(void *arg) {
+    pthread_mutex_lock(&lock1);
+    printf("Thread 1 acquired lock1\n");
+    sleep(1); // Simulate some work
+    
+    pthread_mutex_lock(&lock2); // Waiting for lock2, but thread 2 has it
+    printf("Thread 1 acquired lock2\n");
+    
+    pthread_mutex_unlock(&lock2);
+    pthread_mutex_unlock(&lock1);
+    return NULL;
+}
+
+void *thread2_func(void *arg) {
+    pthread_mutex_lock(&lock2);
+    printf("Thread 2 acquired lock2\n");
+    sleep(1); // Simulate some work
+    
+    pthread_mutex_lock(&lock1); // Waiting for lock1, but thread 1 has it
+    printf("Thread 2 acquired lock1\n");
+    
+    pthread_mutex_unlock(&lock1);
+    pthread_mutex_unlock(&lock2);
+    return NULL;
+}
+
+int main() {
+    pthread_t thread1, thread2;
+    
+    pthread_mutex_init(&lock1, NULL);
+    pthread_mutex_init(&lock2, NULL);
+    
+    pthread_create(&thread1, NULL, thread1_func, NULL);
+    pthread_create(&thread2, NULL, thread2_func, NULL);
+    
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    
+    pthread_mutex_destroy(&lock1);
+    pthread_mutex_destroy(&lock2);
+    
     return 0;
 }
 ```
@@ -400,7 +605,11 @@ int main(int argc, char* argv[]) {
 
 <br>
 
-### Separar hilos y optimizar recursos
+En este ejercicio se puede producir un Deadlock si, por ejemplo, todos los filosofos cogen el tenedor que est a su derecha, lo que les va a hacer esperar hasta el infinito a que se libere el que está a su izquierda, como muestra este vídeo.
+
+[![Philosopher Deadlock. Source: Zaynab Zakiyah](imgs/philo_deadlock.jpg)](https://www.youtube.com/watch?v=VSkvwzqo-Pk&t=65s)
+
+###  2.6. <a name='Separarhilosyoptimizarrecursos'></a>Separar hilos y optimizar recursos
 
 Otra de las funciones que podemos usar es `pthread_detach`, que nos permite separar un hilo del proceso principal y liberar sus recursos automaticamente una vez que termine la ejecución. Es una alternativa para no tener que llamar a `pthread_join` dentro del proceso principal en caso de que no sepamos cuanto va a durar este hilo, si no queremos que la ejecución de un hilo detenga el procseo princiapl o si no nos importa su valor de retorno, como es el caso de tareas muy pequeñas (método conocido como Fire-and-Forget).
 
@@ -456,15 +665,25 @@ int main() {
 ```
 </details>
 
+##  3. <a name='Notasyconsejos'></a>Notas y consejos
 
-## Videos y bibliografía
+* Es mejor una estructura general del programa que contenga los mutex, y luego que cada filosofo tenga su propia estructura que contenga los tiempos en los que debe ralizar cada acción y cuanto tiempo lleva en cada estado.
 
-### Vídeos
+* El número máximo de filósofos que pide la evaluación son 200, tenlo en cuenta a la hora de hacer tu programa.
+
+* El número mínimo de filósofos es uno, pero ten en cuenta que sólo tendrá un tenedor, por lo que  es un caso límite en el que sí o sí tiene que morir de hambre.
+
+##  4. <a name='Videosybibliografa'></a>Videos y bibliografía
+
+###  4.1. <a name='Vdeos'></a>Vídeos
 - [Unix Threads in C (lista de reproducción, empieza por aquí)](https://www.youtube.com/watch?v=d9s_d28yJq0&list=PLfqABt5AS4FmuQf70psXrsMLEDQXNkLq2)
 - [The Dining Philosophers Problem](https://www.youtube.com/watch?v=FYUi-u7UWgw)
 - [The dining Philosophers in C: threads, race conditions and deadlocks #codewithme](https://www.youtube.com/watch?v=zOpzGHwJ3MU)
 
-### Artículos
+###  4.2. <a name='Artculos'></a>Artículos
 - [Philosophers 42 Guide— “The Dining Philosophers Problem”](https://medium.com/@ruinadd/philosophers-42-guide-the-dining-philosophers-problem-893a24bc0fe2)
 - [Philosophers 42 Guide](https://42-cursus.gitbook.io/guide/rank-03/philosophers)
 - [Philosophers — Dining Philosophers problem. 42 project guide — Mandatory part](https://medium.com/@denaelgammal/dining-philosophers-problem-42-project-guide-mandatory-part-a20fb8dc530e)
+
+###  4.3. <a name='Recursos'></a>Recursos
+- [Philosophers visualizer](https://nafuka11.github.io/philosophers-visualizer/)
