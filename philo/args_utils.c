@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   args_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:53:15 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/21 18:43:34 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/24 18:09:01 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 // Takes a const char, manages spaces and symbols and returns an int
-long long int	ft_atoi(const char *nptr)
+int	ft_atoi(const char *nptr)
 {
-	int			symbol;
-	long long	result;
+	int	symbol;
+	int	result;
 
 	symbol = 1;
 	result = 0;

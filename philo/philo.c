@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:42:14 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/21 19:52:30 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/24 19:12:21 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,15 @@ int	main(int argc, char **argv)
 	return (SUCCESS);
 }
 
+// Inits main philo proccess
 int	init_philo(char **argv)
 {
+	t_program	*program;
 
-	return (SUCCESS);
+	program = malloc(sizeof(t_program));
+	if (!program)
+		return (MALLOC_ERROR);
+	if (init_program(argv, program) != SUCCESS)
+		return (free_structs(program, MALLOC_ERROR));
+	return (free_structs(program, SUCCESS));
 }

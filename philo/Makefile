@@ -1,18 +1,20 @@
 NAME = philo
 
 # Compiling libs and flags
-LIBS = -pthread -g3
+LIBS = -pthread
 
 # Mandatory sources and objects
 SRCS = philo.c \
 	check_args.c \
-	args_utils.c
+	args_utils.c \
+	init_program.c \
+	free_structs.c
 
 OBJS = $(SRCS:.c=.o)
 
 # Compilation
 CC = cc
-CFLAGS = -Werror -Wextra -Wall
+CFLAGS = -Werror -Wextra -Wall -g3
 
 # Colors for Makefile output
 RED    = \033[0;31m
@@ -22,7 +24,6 @@ BLUE   = \033[0;34m
 RESET  = \033[0m
 
 # Rules
-
 all: $(NAME)
 
 $(NAME): $(OBJS)
@@ -37,7 +38,6 @@ $(NAME): $(OBJS)
 clean:
 	@echo "\n\n$(RED)Cleaning object files...$(RESET)\n\n"
 	@rm -f $(OBJS)
-
 
 fclean: clean
 	@echo "\n\n$(RED)Cleaning all...$(RESET)\n\n"
