@@ -9,7 +9,8 @@ SRCS = philo.c \
 	args_utils.c \
 	init_program.c \
 	free_structs.c \
-	init_routines.c
+	init_routines.c \
+	waiter.c
 
 OBJS = $(SRCS:.c=.o)
 

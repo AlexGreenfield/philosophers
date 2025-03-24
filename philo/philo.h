@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/24 19:48:41 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/24 20:18:47 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,16 @@ int	ft_isdigit(int c);
 
 int	init_program(char **argv, t_program *program);
 int	init_philos_array(t_program *program);
+int	init_philos_data(t_program *program);
 
 // Routines
 
-int		init_routines(t_program *program);
+int	init_routines(t_program *program);
 void	*routine(void *param);
+
+// Waiter
+
+void	waiter(t_program *program);
 
 // Free
 

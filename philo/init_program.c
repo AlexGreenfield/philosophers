@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/24 19:29:24 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/24 20:24:38 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ int	init_program(char **argv, t_program *program)
 	else
 		program->number_eat = -1;
 	if (init_philos_array(program) != SUCCESS)
+		return (MALLOC_ERROR);
+	if (init_philos_data(program) != SUCCESS)
 		return (MALLOC_ERROR);
 	return (SUCCESS);
 }
@@ -49,6 +51,20 @@ int	init_philos_array(t_program *program)
 			free(program->philo_array);
 			return (MALLOC_ERROR);
 		}
+		i++;
+	}
+	return (SUCCESS);
+}
+
+int	init_philos_data(t_program *program)
+{
+	int	i;
+
+	i = 0;
+	while (i < program->number_philo)
+	{
+		program->philo_array[i]->dead = 0;
+		program->philo_array[i]->number_eaten = 0;
 		i++;
 	}
 	return (SUCCESS);
