@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/24 19:13:49 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:48:41 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,28 @@ typedef struct s_program
 int	init_philo(char **argv);
 
 // Check args
+
 int	bad_args(char **argv);
 int	argv_digits(char **argv);
 int	argv_zero(char **argv);
 
 // Args utils
+
 int	ft_atoi(const char *nptr);
 int	ft_isdigit(int c);
 
 // Init philo
+
 int	init_program(char **argv, t_program *program);
 int	init_philos_array(t_program *program);
 
+// Routines
+
+int		init_routines(t_program *program);
+void	*routine(void *param);
+
 // Free
-int	free_structs(t_program *program, int flag);
+
+int		free_structs(t_program *program, int flag);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/24 19:19:03 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:29:24 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	init_program(char **argv, t_program *program)
 	return (SUCCESS);
 }
 
+// Allocates array of philosophers inside program struct
 int	init_philos_array(t_program *program)
 {
 	int			i;

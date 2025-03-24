@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:42:14 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/24 19:12:21 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:28:19 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,7 @@ int	init_philo(char **argv)
 		return (MALLOC_ERROR);
 	if (init_program(argv, program) != SUCCESS)
 		return (free_structs(program, MALLOC_ERROR));
+	if (init_routines(program) != SUCCESS)
+		return (free_structs(program, THREAD_ERROR));
 	return (free_structs(program, SUCCESS));
 }

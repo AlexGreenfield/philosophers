@@ -6,12 +6,13 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:42:41 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/24 19:20:56 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:54:48 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+// Frees program struct and philo array inside
 int	free_structs(t_program *program, int flag)
 {
 	int	i;
