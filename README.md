@@ -414,7 +414,7 @@ int main()
 
 <br>
 
-Para solucionar este problema y establecer en qué orden los hilos van a acceder a los diferentes recursos del proceso, tenemos que usar `mutex`. `mutex` actua como una especie de semaforo que es capaz de evitar que un hilo acceda a una función mientras otro hilo la esté ejecutando, una protección frente a otros threads.
+Para solucionar este problema y establecer en qué orden los hilos van a acceder a los diferentes recursos del proceso, tenemos que usar `mutex` (MUTual EXclusion). `mutex` actua como una especie de semaforo que es capaz de evitar que un hilo acceda a una función mientras otro hilo la esté ejecutando, una protección frente a otros threads.
 
 Para usarla, tenemos que  declarar una estructura `pthread_mutex_t`, inicializarla con `pthread_mutex_init` y elegir en qué rango del código queremos implementarla con `pthread_mutex_lock` y `pthread_mutex_unlock`. Por supuesto, esta estructura también se tiene que liberar con `pthread_mutex_destroy`.
 
@@ -671,7 +671,29 @@ int main() {
 
 * El número máximo de filósofos que pide la evaluación son 200, tenlo en cuenta a la hora de hacer tu programa.
 
+* El número mínimo de comidas es 0, por lo que la simulación debe finalizar casi inmediatamente.
+
 * El número mínimo de filósofos es uno, pero ten en cuenta que sólo tendrá un tenedor, por lo que  es un caso límite en el que sí o sí tiene que morir de hambre.
+```c
+
+if (i == 0)
+	philos[i].r_fork = &forks[philos[i].num_of_philos - 1];
+else
+	philos[i].r_fork = &forks[i - 1];
+
+if (philo->num_of_philos == 1)
+{
+	ft_usleep(philo->time_to_die);
+	pthread_mutex_unlock(philo->r_fork);
+	return ;
+}
+```
+* ¡No dejés que todos tus filósofos empiecen a la vez! Esto puede causar un deadlock al comienzo de tu programa. Haz que los filosofos impares esperen un poco
+
+```c
+if (philo->id % 2 == 0)
+		ft_usleep(1);	
+```	
 
 ##  4. <a name='Videosybibliografa'></a>Videos y bibliografía
 
