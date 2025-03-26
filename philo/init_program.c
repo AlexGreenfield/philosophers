@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_program.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/25 19:48:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/26 20:35:59 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	init_program_data(char **argv, t_program *program)
 		return (THREAD_ERROR);
 	if (pthread_mutex_init(&program->meal_lock, NULL) != SUCCESS)
 		return (THREAD_ERROR);
-	if (pthread_mutex_init(&program->write_lock,NULL) != SUCCESS)
+	if (pthread_mutex_init(&program->write_lock, NULL) != SUCCESS)
 		return (THREAD_ERROR);
 	return (SUCCESS);
 }

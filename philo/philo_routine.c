@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 19:19:37 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/26 20:19:03 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/26 21:09:24 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	*philo_routine(void *param)
 		usleep(1);
 
 	i = 0;
-	while (i < 5) // Dead philo here
+	while (i < 10) // Dead philo here
 	{
 		eat(philo);
 		sleepy(philo);
@@ -34,9 +34,7 @@ void	*philo_routine(void *param)
 
 void	eat(t_philo *philo)
 {
-	pthread_mutex_lock(philo->write_lock);
-	printf("Philo %d is eating\n", philo->philo_id);
-	pthread_mutex_unlock(philo->write_lock);
+	print_message("is eating", philo);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->number_eaten++;
 	pthread_mutex_unlock(philo->meal_lock);
@@ -44,15 +42,25 @@ void	eat(t_philo *philo)
 
 void	sleepy(t_philo *philo)
 {
-	pthread_mutex_lock(philo->write_lock);
-	printf("Philo %d is sleeping\n", philo->philo_id);
-	pthread_mutex_unlock(philo->write_lock);
+	//pthread_mutex_lock(philo->write_lock);
+	//printf("Philo %d is sleeping\n", philo->philo_id);
+	//pthread_mutex_unlock(philo->write_lock);
+	print_message("is sleeping", philo);
 	usleep(200);
 }
 
 void	think(t_philo *philo)
 {
+	//pthread_mutex_lock(philo->write_lock);
+	//printf("Philo %d is thinking\n", philo->philo_id);
+	//pthread_mutex_unlock(philo->write_lock);
+	print_message("is thinking", philo);
+
+}
+
+void	print_message(char *str, t_philo *philo)
+{
 	pthread_mutex_lock(philo->write_lock);
-	printf("Philo %d is thinking\n", philo->philo_id);
+	printf("%d %s\n", philo->philo_id, str);
 	pthread_mutex_unlock(philo->write_lock);
 }

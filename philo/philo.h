@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/26 20:00:02 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/26 21:07:11 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int	init_philos_data(t_program *program);
 // Routines
 
 int	init_routines(t_program *program);
-int	dead_philo(t_philo *philo);
 
 // Philo routine
 
@@ -83,10 +82,14 @@ void	*philo_routine (void *param);
 void	eat(t_philo *philo);
 void	sleepy(t_philo *philo);
 void	think(t_philo *philo);
+void	print_message(char *str, t_philo *philo);
 
 // Waiter routine
 
 void	*waiter_routine(void *param);
+int	dead_philo(t_philo **philo_array); // We should pass program
+int	all_eated(t_philo **philo_array); // We should pass program
+
 
 // Free
 

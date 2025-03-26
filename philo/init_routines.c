@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:34:51 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/26 19:37:06 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/26 21:14:15 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	init_routines(t_program *program)
 	t_philo		**philo_array;
 
 	philo_array = program->philo_array;
-	if (pthread_create(&waiter, NULL, waiter_routine, philo_array) != SUCCESS)
+	if (pthread_create(&waiter, NULL, waiter_routine, &philo_array) != SUCCESS)
 		return (THREAD_ERROR);
 	i = 0;
 	while (i < program->number_philo)
@@ -30,8 +30,7 @@ int	init_routines(t_program *program)
 			return (THREAD_ERROR);
 		i++;
 	}
-	if (pthread_join(waiter, NULL) != SUCCESS)
-		return (THREAD_ERROR);
+
 	i = 0;
 	while (i < program->number_philo)
 	{
@@ -39,5 +38,7 @@ int	init_routines(t_program *program)
 			return (THREAD_ERROR);
 		i++;
 	}
+	if (pthread_join(waiter, NULL) != SUCCESS)
+		return (THREAD_ERROR);
 	return (SUCCESS);
 }
