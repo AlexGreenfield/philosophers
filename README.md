@@ -561,10 +561,10 @@ void *thread1_func(void *arg) {
     pthread_mutex_lock(&lock1);
     printf("Thread 1 acquired lock1\n");
     sleep(1); // Simulate some work
-    
+
     pthread_mutex_lock(&lock2); // Waiting for lock2, but thread 2 has it
     printf("Thread 1 acquired lock2\n");
-    
+
     pthread_mutex_unlock(&lock2);
     pthread_mutex_unlock(&lock1);
     return NULL;
@@ -574,10 +574,10 @@ void *thread2_func(void *arg) {
     pthread_mutex_lock(&lock2);
     printf("Thread 2 acquired lock2\n");
     sleep(1); // Simulate some work
-    
+
     pthread_mutex_lock(&lock1); // Waiting for lock1, but thread 1 has it
     printf("Thread 2 acquired lock1\n");
-    
+
     pthread_mutex_unlock(&lock1);
     pthread_mutex_unlock(&lock2);
     return NULL;
@@ -585,19 +585,19 @@ void *thread2_func(void *arg) {
 
 int main() {
     pthread_t thread1, thread2;
-    
+
     pthread_mutex_init(&lock1, NULL);
     pthread_mutex_init(&lock2, NULL);
-    
+
     pthread_create(&thread1, NULL, thread1_func, NULL);
     pthread_create(&thread2, NULL, thread2_func, NULL);
-    
+
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
-    
+
     pthread_mutex_destroy(&lock1);
     pthread_mutex_destroy(&lock2);
-    
+
     return 0;
 }
 ```
@@ -692,8 +692,20 @@ if (philo->num_of_philos == 1)
 
 ```c
 if (philo->id % 2 == 0)
-		ft_usleep(1);	
-```	
+		ft_usleep(1);
+```
+
+* Una vez que un filósofo ha superado todas las comidas, ¿debe dejar su rutina y parar?
+
+* ¿Hay que esperar a que todos los hilos se hayan creado para lanzarlos de golpe?
+
+* Comandos utiles
+
+— DRD: Run with valgrind --tool=drd to check for data races.
+
+— Helgrind: Run with valgrind --tool=helgrind to find lock issues and potential deadlocks.
+
+— FSanitise: Compile with -fsanitize=thread to detect threading problems while running.
 
 ##  4. <a name='Videosybibliografa'></a>Videos y bibliografía
 

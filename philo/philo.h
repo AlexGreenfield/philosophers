@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/25 19:48:23 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/26 20:00:02 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,18 @@ int	init_philos_data(t_program *program);
 // Routines
 
 int	init_routines(t_program *program);
-void	*routine(void *param);
 int	dead_philo(t_philo *philo);
 
-// Waiter
+// Philo routine
 
-void	waiter(t_program *program);
+void	*philo_routine (void *param);
+void	eat(t_philo *philo);
+void	sleepy(t_philo *philo);
+void	think(t_philo *philo);
+
+// Waiter routine
+
+void	*waiter_routine(void *param);
 
 // Free
 
