@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/24 20:18:47 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/25 19:48:23 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,27 @@
 // Philo structs
 typedef struct s_philo
 {
+	pthread_t	philo_thread;
 	int		philo_id;
 	int		dead;
 	int		number_eaten;
+	pthread_mutex_t	*dead_lock;
+	pthread_mutex_t	*meal_lock;
+	pthread_mutex_t	*write_lock;
 }	t_philo;
 
 // Program struct
 typedef struct s_program
 {
-	int		number_philo;
-	int		time_die;
-	int		time_eat;
-	int		time_sleep;
-	int		number_eat;
-	t_philo	**philo_array;
+	int				number_philo;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
+	int				number_eat;
+	pthread_mutex_t	dead_lock;
+	pthread_mutex_t	meal_lock;
+	pthread_mutex_t	write_lock;
+	t_philo			**philo_array;
 }	t_program;
 
 // Main
@@ -60,6 +67,7 @@ int	ft_isdigit(int c);
 
 // Init philo
 
+int	init_program_data(char **argv, t_program *program);
 int	init_program(char **argv, t_program *program);
 int	init_philos_array(t_program *program);
 int	init_philos_data(t_program *program);
@@ -68,6 +76,7 @@ int	init_philos_data(t_program *program);
 
 int	init_routines(t_program *program);
 void	*routine(void *param);
+int	dead_philo(t_philo *philo);
 
 // Waiter
 

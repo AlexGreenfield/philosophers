@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_routines.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:34:51 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/24 20:29:49 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/25 20:07:38 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,16 @@
 // Small routine for testing
 void	*routine(void *param)
 {
-	t_program	*program;
+	t_philo	*philo;
 
-	program = (t_program *)param;
-	printf("In thread, printing %d\n", program->number_philo);
+	philo = (t_philo *)param;
+	while (philo->number_eaten < 5 && !dead_philo(philo))
+	{
+		printf("In thread, philo %d has %d eats\n", philo->philo_id, philo->number_eaten);
+		philo->number_eaten++;
+		printf("In thread, philo %d has eated, now has %d eats\n", philo->philo_id, philo->number_eaten);
+		usleep(2000000);
+	}
 	return (NULL);
 }
 
@@ -26,13 +32,13 @@ void	*routine(void *param)
 int	init_routines(t_program *program)
 {
 	int			i;
-	pthread_t	philo_id[program->number_philo]; // Change
+	t_philo	**philo_array;
 
-	// Separate philos and launch them
+	philo_array = program->philo_array;
 	i = 0;
 	while (i < program->number_philo)
 	{
-		if (pthread_create(&philo_id[i], NULL, routine, program) != SUCCESS)
+		if (pthread_create(&philo_array[i]->philo_thread, NULL, routine, philo_array[i]) != SUCCESS)
 			return (THREAD_ERROR);
 		i++;
 	}
@@ -49,9 +55,25 @@ int	init_routines(t_program *program)
 	i = 0;
 	while (i < program->number_philo)
 	{
-		if (pthread_join(philo_id[i], NULL) != SUCCESS)
+		if (pthread_join(philo_array[i]->philo_thread, NULL) != SUCCESS)
 			return (THREAD_ERROR);
 		i++;
 	}
 	return (SUCCESS);
+}
+
+int	dead_philo(t_philo *philo)
+{
+	printf("Philo %d its trying to mutex\n", philo->philo_id);
+	pthread_mutex_lock(philo->dead_lock);
+	printf("Philo %d has locked the mutex\n", philo->philo_id);
+	if (philo->dead == 1)
+		return (pthread_mutex_unlock(philo->dead_lock), 1);
+	if (philo->number_eaten == 4)
+	{
+		printf("Philo %d has exploded\n", philo->philo_id);
+		return (pthread_mutex_unlock(philo->dead_lock), 1);
+	}
+	usleep(5000000);
+	return (pthread_mutex_unlock(philo->dead_lock), 0);
 }
