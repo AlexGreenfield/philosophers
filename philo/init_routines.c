@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:34:51 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/27 17:46:57 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/27 21:23:44 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ int	init_routines(t_program *program)
 	{
 		if (pthread_create(&philo_array[i]->philo_thread,
 				NULL, philo_routine, philo_array[i]) != SUCCESS)
-				{
-					printf("Error creating philo %d\n", i);
-					return (THREAD_ERROR);
-				}
+		{
+			printf("Error creating philo %d\n", i);
+			return (THREAD_ERROR);
+		}
 		i++;
 	}
 	if (pthread_join(waiter, NULL) != SUCCESS)
@@ -51,6 +51,5 @@ int	init_routines(t_program *program)
 		}
 		i++;
 	}
-
 	return (SUCCESS);
 }

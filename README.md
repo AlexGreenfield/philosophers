@@ -695,7 +695,25 @@ if (philo->id % 2 == 0)
 		ft_usleep(1);
 ```
 
-* Una vez que un filósofo ha superado todas las comidas, ¿debe dejar su rutina y parar?
+* Varios filosofos deben de ser capaces de comer a la vez, pero cada uno conservar sus tenedores, tenlo en cuenta a la hora de distribuir tu mutex meal.
+
+* Recuerda que los filosofos no pueden hablar entre ellos, por lo que no puedn consultar las variables ni el estado de otros filosofos.
+
+* El enunciado dice que los filosofs no saben cuando otro filosofo @va a morir. ¿Significa eso que no pueden saber si un filosofo ya ha muerto? Si es asi, utiliza detach para separar los hilos, y que el proceso en conjunto acabe cuando lo diga el camarero.
+
+* Una vez que un filósofo ha superado todas las comidas, ¿debe dejar su rutina y parar? ¿Sigue comiendo, o se queda solo pensando y durmiendo? Si es así
+
+```c
+	while (*philo->philo_dead != 1 && *philo->philo_eated != 1)
+	{
+		eat(philo);
+		if (philo->number_eaten == philo->number_eat)
+			break ;
+		sleepy(philo);
+		think(philo);
+		i++;
+	}
+```
 
 * ¿Hay que esperar a que todos los hilos se hayan creado para lanzarlos de golpe?
 

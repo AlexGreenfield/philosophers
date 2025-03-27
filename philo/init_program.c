@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/27 18:24:30 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/27 21:32:43 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	init_program_data(char **argv, t_program *program)
 		program->number_eat = ft_atoi(argv[5]);
 	else
 		program->number_eat = -1;
+	program->philo_dead = 0;
+	program->philo_eated = 0;
 	if (pthread_mutex_init(&program->dead_lock, NULL) != SUCCESS)
 		return (THREAD_ERROR);
 	if (pthread_mutex_init(&program->meal_lock, NULL) != SUCCESS)
@@ -79,8 +81,10 @@ int	init_philos_data(t_program *program)
 	{
 		program->philo_array[i]->philo_id = i;
 		program->philo_array[i]->dead = 0;
+		program->philo_array[i]->philo_dead = &program->philo_dead;
 		program->philo_array[i]->number_eat = program->number_eat;
 		program->philo_array[i]->number_eaten = 0;
+		program->philo_array[i]->philo_eated = &program->philo_eated;
 		program->philo_array[i]->dead_lock = &program->dead_lock;
 		program->philo_array[i]->meal_lock = &program->meal_lock;
 		program->philo_array[i]->write_lock = &program->write_lock;

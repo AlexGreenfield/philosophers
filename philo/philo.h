@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/27 18:38:38 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/27 21:24:37 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 // Philo structs
 typedef struct s_philo
 {
-	pthread_t	philo_thread;
+	pthread_t		philo_thread;
 	int				philo_id;
 	int				dead;
 	int				number_eat;
@@ -57,33 +57,33 @@ typedef struct s_program
 }	t_program;
 
 // Main
-int	init_philo(char **argv);
+int		init_philo(char **argv);
 
 // Check args
 
-int	bad_args(char **argv);
-int	argv_digits(char **argv);
-int	argv_zero(char **argv);
+int		bad_args(char **argv);
+int		argv_digits(char **argv);
+int		argv_zero(char **argv);
 
 // Args utils
 
-int	ft_atoi(const char *nptr);
-int	ft_isdigit(int c);
+int		ft_atoi(const char *nptr);
+int		ft_isdigit(int c);
 
 // Init philo
 
-int	init_program_data(char **argv, t_program *program);
-int	init_program(char **argv, t_program *program);
-int	init_philos_array(t_program *program);
-int	init_philos_data(t_program *program);
+int		init_program_data(char **argv, t_program *program);
+int		init_program(char **argv, t_program *program);
+int		init_philos_array(t_program *program);
+int		init_philos_data(t_program *program);
 
 // Routines
 
-int	init_routines(t_program *program);
+int		init_routines(t_program *program);
 
 // Philo routine
 
-void	*philo_routine (void *param);
+void	*philo_routine(void *param);
 void	eat(t_philo *philo);
 void	sleepy(t_philo *philo);
 void	think(t_philo *philo);
@@ -92,9 +92,8 @@ void	print_message(char *str, t_philo *philo);
 // Waiter routine
 
 void	*waiter_routine(void *param);
-int	dead_philo(t_program *program); // We should pass program
-int	all_eated(t_program *program); // We should pass program
-
+int		dead_philo(t_program *program); // We should pass program
+int		all_eated(t_program *program); // We should pass program
 
 // Free
 
