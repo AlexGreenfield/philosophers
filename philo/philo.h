@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/26 21:07:11 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/27 18:38:38 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,12 @@
 typedef struct s_philo
 {
 	pthread_t	philo_thread;
-	int		philo_id;
-	int		dead;
-	int		number_eaten;
+	int				philo_id;
+	int				dead;
+	int				number_eat;
+	int				number_eaten;
+	int				*philo_dead; // Metodoly doubt
+	int				*philo_eated;
 	pthread_mutex_t	*dead_lock;
 	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*write_lock;
@@ -45,6 +48,8 @@ typedef struct s_program
 	int				time_eat;
 	int				time_sleep;
 	int				number_eat;
+	int				philo_dead;
+	int				philo_eated;
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
 	pthread_mutex_t	write_lock;
@@ -87,8 +92,8 @@ void	print_message(char *str, t_philo *philo);
 // Waiter routine
 
 void	*waiter_routine(void *param);
-int	dead_philo(t_philo **philo_array); // We should pass program
-int	all_eated(t_philo **philo_array); // We should pass program
+int	dead_philo(t_program *program); // We should pass program
+int	all_eated(t_program *program); // We should pass program
 
 
 // Free

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 19:19:37 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/26 21:09:24 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/27 17:11:29by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,27 @@ void	*philo_routine(void *param)
 	t_philo	*philo;
 
 	philo = (t_philo *)param;
-	if (philo->philo_id % 2 != 0) // Offset for odd philo
+	if (philo->philo_id % 2 != 0)
 		usleep(1);
 
 	i = 0;
-	while (i < 10) // Dead philo here
+	while (!philo->philo_dead || !philo->philo_eated)
 	{
 		eat(philo);
 		sleepy(philo);
 		think(philo);
 		i++;
 	}
+	print_message("finished routine", philo);
 	return (param);
 }
 
 void	eat(t_philo *philo)
 {
-	print_message("is eating", philo);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->number_eaten++;
+	print_message("is eating", philo);
+	usleep(1000000);
 	pthread_mutex_unlock(philo->meal_lock);
 }
 

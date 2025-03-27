@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   waiter_routine.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/26 21:13:12 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/27 18:39:32 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,61 +16,62 @@
 
 void	*waiter_routine(void *param)
 {
-	t_philo		**philo_array;
+	t_program	*program;
+	int			i;
 
-	philo_array = param;
+	i = 0;
+	program = param;
 	while (1)
-		if (!dead_philo(philo_array))
-		//if (!dead_philo(philo_array) || !all_eated(philo_array))
-
+	{
+		usleep(1);
+		if (dead_philo(program) == SUCCESS || all_eated(program) == SUCCESS)
 			break ;
+		i++;
+	}
+	printf("Waiter finished routine\n\n");
 	return (param);
 }
 
-int	dead_philo(t_philo **philo_array) // We should pass program
+int	dead_philo(t_program *program) // We should pass program
 {
 	int	i;
-	int	flag;
 
-	i = 5;
-	flag = 0;
+	i = 0;
 	while (i < 5)
 	{
-		pthread_mutex_lock(philo_array[i]->dead_lock);
-		if (philo_array[i]->dead)
-			flag = 1;
-		pthread_mutex_unlock(philo_array[i]->dead_lock);
-
-		if (flag == 1)
+		pthread_mutex_lock(&program->dead_lock);
+		if (program->philo_array[i]->dead)
 		{
-			print_message("%d is dead\n", philo_array[i]);
-			return (0);
+			program->philo_dead = 1;
+			print_message("%d is dead\n", program->philo_array[i]);
+			return (SUCCESS);
 		}
+		pthread_mutex_unlock(&program->dead_lock);
 		i++;
 	}
 	return (1);
 }
 
-
-int	all_eated(t_philo **philo_array) // We should pass program
+int	all_eated(t_program *program) // We should pass program
 {
 	int	i;
-	int	flag;
+	int	eated;
 
-	i = 5;
-	flag = 0;
+	i = 0;
+	eated = 0;
 	while (i < 5)
 	{
-		pthread_mutex_lock(philo_array[i]->meal_lock);
-		if (philo_array[i]->number_eaten == 5)
-			flag = 1;
-		pthread_mutex_unlock(philo_array[i]->meal_lock);
-
-		if (flag == 1)
+		pthread_mutex_lock(&program->meal_lock);
+		if (program->philo_array[i]->number_eaten == program->number_eat)
+			eated++;
+		if (eated == program->number_philo)
 		{
-			print_message("%d has eated\n", philo_array[i]);
-			return (0);
+			program->philo_eated = 1;
+			pthread_mutex_unlock(&program->meal_lock);
+			printf("\nEveryone eated\n");
+			return (SUCCESS);
 		}
+		pthread_mutex_unlock(&program->meal_lock);
 		i++;
 	}
 	return (1);

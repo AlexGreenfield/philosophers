@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_program.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/26 20:35:59 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/27 18:24:30 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int	init_philos_data(t_program *program)
 	{
 		program->philo_array[i]->philo_id = i;
 		program->philo_array[i]->dead = 0;
+		program->philo_array[i]->number_eat = program->number_eat;
 		program->philo_array[i]->number_eaten = 0;
 		program->philo_array[i]->dead_lock = &program->dead_lock;
 		program->philo_array[i]->meal_lock = &program->meal_lock;
