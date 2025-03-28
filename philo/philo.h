@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/27 21:24:37 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/28 17:04:20 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	*philo_routine(void *param);
 void	eat(t_philo *philo);
 void	sleepy(t_philo *philo);
 void	think(t_philo *philo);
+int		waiter_allows(t_philo *philo);
 void	print_message(char *str, t_philo *philo);
 
 // Waiter routine

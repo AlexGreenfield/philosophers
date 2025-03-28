@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/27 21:38:31 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/28 17:28:12 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*philo_routine(void *param)
 	if (philo->philo_id % 2 != 0)
 		usleep(1);
 	i = 0;
-	while (*philo->philo_dead != 1 && *philo->philo_eated != 1)
+	while (i < 6)
 	{
 		eat(philo);
 		sleepy(philo);
@@ -57,4 +57,22 @@ void	print_message(char *str, t_philo *philo)
 	pthread_mutex_lock(philo->write_lock);
 	printf("%d %s\n", philo->philo_id, str);
 	pthread_mutex_unlock(philo->write_lock);
+}
+
+int	waiter_allows(t_philo *philo)
+{
+	int	flag;
+
+	flag = 0;
+	pthread_mutex_lock(philo->meal_lock); // Doesnt leave lock
+	if (philo->philo_eated)
+		flag = 1;
+	pthread_mutex_unlock(philo->meal_lock);
+	pthread_mutex_lock(philo->dead_lock); // Doesnt leave lock
+	if (philo->philo_dead)
+		flag = 1;
+	pthread_mutex_unlock(philo->dead_lock);
+	if (flag == 1)
+		return (1);
+	return(0);
 }
