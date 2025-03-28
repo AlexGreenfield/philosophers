@@ -697,11 +697,11 @@ if (philo->id % 2 == 0)
 
 * Varios filosofos deben de ser capaces de comer a la vez, pero cada uno conservar sus tenedores, tenlo en cuenta a la hora de distribuir tu mutex meal.
 
-* Recuerda que los filosofos no pueden hablar entre ellos, por lo que no puedn consultar las variables ni el estado de otros filosofos.
+* Recuerda que los filosofos no pueden hablar entre ellos, por lo que no pueden consultar las variables ni el estado de otros filosofos.
 
-* El enunciado dice que los filosofs no saben cuando otro filosofo @va a morir. ¿Significa eso que no pueden saber si un filosofo ya ha muerto? Si es asi, utiliza detach para separar los hilos, y que el proceso en conjunto acabe cuando lo diga el camarero.
+* El enunciado dice que los filosofs no saben cuando otro filosofo va a morir, pero si pueden saber cuando un filosofo ya ha muerto
 
-* Una vez que un filósofo ha superado todas las comidas, ¿debe dejar su rutina y parar? ¿Sigue comiendo, o se queda solo pensando y durmiendo? Si es así
+* Una vez que un filósofo ha superado todas las comidas, puede o seguir con su ultima rutina o para de golpe. Pero en cuando todos coman, es necesario que se pare totalmente la simulación. Para ello tienen que pensar y dormir con un ojo abierto, esperando el tiempo necesario para seguir con su rutina pero siempre pendiente de las instrucciones del camarero. para ello hay que insertar un pequeño bucle dentro de dormir y pensar que dure lo mismo que el tiempo establecido.
 
 ```c
 	while (*philo->philo_dead != 1 && *philo->philo_eated != 1)

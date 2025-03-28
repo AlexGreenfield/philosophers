@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/28 17:28:42 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/28 17:45:28 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@ void	*waiter_routine(void *param)
 	program = param;
 	while (1)
 	{
-		usleep(200); // Same as time sleeping, for reference
+		usleep(1); // Same as time sleeping, for reference
 		if ((dead_philo(program) == SUCCESS) || (all_eated(program) == SUCCESS))
 			break ;
 		i++;
 	}
+	pthread_mutex_lock(&program->write_lock);
 	printf("Waiter finished routine\n\n");
+	pthread_mutex_unlock(&program->write_lock);
 	return (param);
 }
 
@@ -75,7 +77,9 @@ int	all_eated(t_program *program) // We should pass program
 		pthread_mutex_lock(&program->meal_lock); // But this flag is never reached
 		program->philo_eated = 1;
 		pthread_mutex_unlock(&program->meal_lock);
+		pthread_mutex_lock(&program->write_lock);
 		printf("All eated\n");
+		pthread_mutex_unlock(&program->write_lock);
 		return (SUCCESS);
 	}
 	return (1);
