@@ -6,21 +6,31 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:34:51 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/27 21:23:44 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/31 17:53:21 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// Launches al philo threads
+// Launches and joins all threads
 int	init_routines(t_program *program)
 {
+	if (launch_threads(program) != SUCCESS)
+		return (THREAD_ERROR);
+	if (join_threads(program) != SUCCESS)
+		return (THREAD_ERROR);
+	return (SUCCESS);
+}
+
+// Launches philo and waiter threads
+int	launch_threads(t_program *program)
+{
 	int			i;
-	pthread_t	waiter;
 	t_philo		**philo_array;
 
 	philo_array = program->philo_array;
-	if (pthread_create(&waiter, NULL, waiter_routine, program) != SUCCESS)
+	if (pthread_create(&program->waiter, NULL,
+			waiter_routine, program) != SUCCESS)
 	{
 		printf("Error creating waiter\n");
 		return (THREAD_ERROR);
@@ -36,7 +46,17 @@ int	init_routines(t_program *program)
 		}
 		i++;
 	}
-	if (pthread_join(waiter, NULL) != SUCCESS)
+	return (SUCCESS);
+}
+
+// Joins philo and waiter threads
+int	join_threads(t_program *program)
+{
+	int			i;
+	t_philo		**philo_array;
+
+	philo_array = program->philo_array;
+	if (pthread_join(program->waiter, NULL) != SUCCESS)
 	{
 		printf("Error joining waiter\n");
 		return (THREAD_ERROR);

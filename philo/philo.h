@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/28 17:04:20 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/31 21:32:50 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,15 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <pthread.h>
+# include <stdint.h>
+# include <sys/time.h>
 
 // Macros error
 # define SUCCESS 0
 # define MALLOC_ERROR -1
 # define THREAD_ERROR -2
 # define FILE_ERROR -3
+# define TIME_ERROR -4
 
 // Philo structs
 typedef struct s_philo
@@ -33,8 +36,13 @@ typedef struct s_philo
 	int				dead;
 	int				number_eat;
 	int				number_eaten;
-	int				*philo_dead; // Metodoly doubt
+	int				*philo_dead;
 	int				*philo_eated;
+	uint64_t		time_die;
+	uint64_t		time_eat;
+	uint16_t		time_sleep;
+	uint64_t		start_time;
+	uint64_t		last_meal_time;
 	pthread_mutex_t	*dead_lock;
 	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*write_lock;
@@ -43,61 +51,67 @@ typedef struct s_philo
 // Program struct
 typedef struct s_program
 {
-	int				number_philo;
-	int				time_die;
-	int				time_eat;
-	int				time_sleep;
 	int				number_eat;
 	int				philo_dead;
 	int				philo_eated;
+	int				number_philo;
+	uint64_t		time_die;
+	uint64_t		time_eat;
+	uint16_t		time_sleep;
+	uint64_t		start_time;
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
 	pthread_mutex_t	write_lock;
+	pthread_t		waiter;
 	t_philo			**philo_array;
 }	t_program;
 
 // Main
-int		init_philo(char **argv);
+int			init_philo(char **argv);
 
 // Check args
 
-int		bad_args(char **argv);
-int		argv_digits(char **argv);
-int		argv_zero(char **argv);
+int			bad_args(char **argv);
+int			argv_digits(char **argv);
+int			argv_zero(char **argv);
 
 // Args utils
+uint64_t	ft_atoi(const char *nptr);
+int			ft_isdigit(int c);
 
-int		ft_atoi(const char *nptr);
-int		ft_isdigit(int c);
+// Routine utils
+void		print_message(char *str, t_philo *philo);
+uint64_t	miliseconds_time(void);
 
 // Init philo
 
-int		init_program_data(char **argv, t_program *program);
-int		init_program(char **argv, t_program *program);
-int		init_philos_array(t_program *program);
-int		init_philos_data(t_program *program);
+int			init_program_data(char **argv, t_program *program);
+int			init_program(char **argv, t_program *program);
+int			init_philos_array(t_program *program);
+int			init_philos_data(t_program *program);
 
 // Routines
 
-int		init_routines(t_program *program);
+int			init_routines(t_program *program);
+int			launch_threads(t_program *program);
+int			join_threads(t_program *program);
 
 // Philo routine
 
-void	*philo_routine(void *param);
-void	eat(t_philo *philo);
-void	sleepy(t_philo *philo);
-void	think(t_philo *philo);
-int		waiter_allows(t_philo *philo);
-void	print_message(char *str, t_philo *philo);
+void		*philo_routine(void *param);
+void		eat(t_philo *philo);
+void		sleepy(t_philo *philo);
+void		think(t_philo *philo);
+int			waiter_allows(t_philo *philo);
 
 // Waiter routine
 
-void	*waiter_routine(void *param);
-int		dead_philo(t_program *program); // We should pass program
-int		all_eated(t_program *program); // We should pass program
+void		*waiter_routine(void *param);
+int			dead_philo(t_program *program);
+int			all_eated(t_program *program);
 
 // Free
 
-int		free_structs(t_program *program, int flag);
+int			free_structs(t_program *program, int flag);
 
 #endif

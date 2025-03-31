@@ -6,13 +6,13 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/27 21:32:43 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/31 21:34:34 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// Initializes program struct
+// Initializes all the program struct
 int	init_program(char **argv, t_program *program)
 {
 	if (init_program_data(argv, program) != SUCCESS)
@@ -29,6 +29,8 @@ int	init_program_data(char **argv, t_program *program)
 {
 	program->number_philo = ft_atoi(argv[1]);
 	program->time_die = ft_atoi(argv[2]);
+	printf("Time to die is %lu\n", program->time_die);
+	usleep(10000);
 	program->time_eat = ft_atoi(argv[3]);
 	program->time_sleep = ft_atoi(argv[4]);
 	if (argv[5] != NULL)
@@ -37,6 +39,7 @@ int	init_program_data(char **argv, t_program *program)
 		program->number_eat = -1;
 	program->philo_dead = 0;
 	program->philo_eated = 0;
+	program->start_time = miliseconds_time();
 	if (pthread_mutex_init(&program->dead_lock, NULL) != SUCCESS)
 		return (THREAD_ERROR);
 	if (pthread_mutex_init(&program->meal_lock, NULL) != SUCCESS)
@@ -72,6 +75,7 @@ int	init_philos_array(t_program *program)
 	return (SUCCESS);
 }
 
+// Init all philo data
 int	init_philos_data(t_program *program)
 {
 	int	i;
@@ -79,12 +83,17 @@ int	init_philos_data(t_program *program)
 	i = 0;
 	while (i < program->number_philo)
 	{
-		program->philo_array[i]->philo_id = i;
+		program->philo_array[i]->philo_id = i + 1;
 		program->philo_array[i]->dead = 0;
 		program->philo_array[i]->philo_dead = &program->philo_dead;
 		program->philo_array[i]->number_eat = program->number_eat;
 		program->philo_array[i]->number_eaten = 0;
 		program->philo_array[i]->philo_eated = &program->philo_eated;
+		program->philo_array[i]->time_die= program->time_die;
+		program->philo_array[i]->time_eat = program->time_eat;
+		program->philo_array[i]->time_sleep = program->time_sleep;
+		program->philo_array[i]->start_time = miliseconds_time();
+		program->philo_array[i]->last_meal_time = miliseconds_time();
 		program->philo_array[i]->dead_lock = &program->dead_lock;
 		program->philo_array[i]->meal_lock = &program->meal_lock;
 		program->philo_array[i]->write_lock = &program->write_lock;

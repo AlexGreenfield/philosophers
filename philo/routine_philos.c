@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_routine.c                                    :+:      :+:    :+:   */
+/*   routine_philos.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/28 17:28:12 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/03/31 21:42:23 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+// All eat, sleep think routine loop while waiter allows
 void	*philo_routine(void *param)
 {
 	int		i;
@@ -21,7 +22,7 @@ void	*philo_routine(void *param)
 	if (philo->philo_id % 2 != 0)
 		usleep(1);
 	i = 0;
-	while (i < 6)
+	while (waiter_allows(philo))
 	{
 		eat(philo);
 		sleepy(philo);
@@ -32,47 +33,46 @@ void	*philo_routine(void *param)
 	return (param);
 }
 
+// Eat routine
 void	eat(t_philo *philo)
 {
 	pthread_mutex_lock(philo->meal_lock);
+	philo->last_meal_time = miliseconds_time();
 	philo->number_eaten++;
 	print_message("is eating", philo);
+	//printf("Philo %d updated last_meal_time to %lu\n", philo->philo_id, philo->last_meal_time);
 	pthread_mutex_unlock(philo->meal_lock);
-	usleep(1000000);
+	usleep(philo->time_eat * 1000);
 }
 
+// Sleep routine
 void	sleepy(t_philo *philo)
 {
 	print_message("is sleeping", philo);
-	usleep(200);
+	usleep(philo->time_sleep * 1000);
 }
 
+// Think Routine
 void	think(t_philo *philo)
 {
 	print_message("is thinking", philo);
 }
 
-void	print_message(char *str, t_philo *philo)
-{
-	pthread_mutex_lock(philo->write_lock);
-	printf("%d %s\n", philo->philo_id, str);
-	pthread_mutex_unlock(philo->write_lock);
-}
-
+// Waiter allows routine while no philo dead or all eated
 int	waiter_allows(t_philo *philo)
 {
 	int	flag;
 
 	flag = 0;
-	pthread_mutex_lock(philo->meal_lock); // Doesnt leave lock
-	if (philo->philo_eated)
+	pthread_mutex_lock(philo->meal_lock);
+	if (*philo->philo_eated == 1)
 		flag = 1;
 	pthread_mutex_unlock(philo->meal_lock);
-	pthread_mutex_lock(philo->dead_lock); // Doesnt leave lock
-	if (philo->philo_dead)
+	pthread_mutex_lock(philo->dead_lock);
+	if (*philo->philo_dead == 1)
 		flag = 1;
 	pthread_mutex_unlock(philo->dead_lock);
 	if (flag == 1)
-		return (1);
-	return(0);
+		return (0);
+	return (1);
 }

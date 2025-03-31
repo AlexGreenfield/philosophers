@@ -6,12 +6,13 @@ LIBS = -pthread
 # Mandatory sources and objects
 SRCS = philo.c \
 	check_args.c \
-	args_utils.c \
+	utils_routine.c \
+	utils_args.c \
 	init_program.c \
-	free_structs.c \
 	init_routines.c \
-	waiter_routine.c \
-	philo_routine.c
+	routine_waiter.c \
+	routine_philos.c \
+	free_structs.c \
 
 OBJS = $(SRCS:.c=.o)
 

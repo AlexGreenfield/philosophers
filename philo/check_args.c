@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:52:09 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/21 19:33:15 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/03/31 18:10:52 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	argv_digits(char **argv)
 	return (SUCCESS);
 }
 
-// Checks if any argument it's zero and philo n limit
+// Checks if any argument it's zero and philo 200 limit
 int	argv_zero(char **argv)
 {
 	int	i;
