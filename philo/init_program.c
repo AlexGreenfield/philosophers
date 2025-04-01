@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_program.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/31 21:34:34 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/01 20:24:04 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	init_program(char **argv, t_program *program)
 		return (MALLOC_ERROR);
 	if (init_philos_data(program) != SUCCESS)
 		return (MALLOC_ERROR);
+	assign_sticks(program);
 	return (SUCCESS);
 }
 
@@ -89,7 +90,7 @@ int	init_philos_data(t_program *program)
 		program->philo_array[i]->number_eat = program->number_eat;
 		program->philo_array[i]->number_eaten = 0;
 		program->philo_array[i]->philo_eated = &program->philo_eated;
-		program->philo_array[i]->time_die= program->time_die;
+		program->philo_array[i]->time_die = program->time_die;
 		program->philo_array[i]->time_eat = program->time_eat;
 		program->philo_array[i]->time_sleep = program->time_sleep;
 		program->philo_array[i]->start_time = miliseconds_time();
@@ -97,6 +98,28 @@ int	init_philos_data(t_program *program)
 		program->philo_array[i]->dead_lock = &program->dead_lock;
 		program->philo_array[i]->meal_lock = &program->meal_lock;
 		program->philo_array[i]->write_lock = &program->write_lock;
+		if (pthread_mutex_init(&program->philo_array[i]->r_stick,
+				NULL) != SUCCESS)
+			return (THREAD_ERROR);
+		i++;
+	}
+	return (SUCCESS);
+}
+
+// Asssign R and L stick (n + 1 or 0 if n philo number)
+int	assign_sticks(t_program *program)
+{
+	int		i;
+	t_philo	**philo_array;
+
+	i = 0;
+	philo_array = program->philo_array;
+	while (i < program->number_philo)
+	{
+		if (i == program->number_philo - 1)
+			philo_array[i]->l_stick = philo_array[0]->r_stick;
+		else
+			philo_array[i]->l_stick = philo_array[i + 1]->r_stick;
 		i++;
 	}
 	return (SUCCESS);

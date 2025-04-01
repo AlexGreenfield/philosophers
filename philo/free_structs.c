@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:42:41 by acastrov          #+#    #+#             */
-/*   Updated: 2025/03/26 20:38:42 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/04/01 19:53:24 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ int	free_structs(t_program *program, int flag)
 		{
 			while (i < program->number_philo)
 			{
+				if (pthread_mutex_destroy(&program->philo_array[i]->r_stick)
+					!= SUCCESS)
+					printf("Error freeing %d L stick mutex\n", i);
 				free(program->philo_array[i]);
 				i++;
 			}

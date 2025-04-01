@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/01 18:57:28 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/04/01 20:20:41 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*philo_routine(void *param)
 
 	philo = (t_philo *)param;
 	if (philo->philo_id % 2 != 0)
-		usleep(1);
+		usleep(10000);
 	i = 0;
 	while (waiter_allows(philo))
 	{
@@ -41,12 +41,18 @@ void	eat(t_philo *philo)
 {
 	uint64_t	current_time;
 
+	pthread_mutex_lock(&philo->r_stick);
+	print_message("has taken a fork", philo);
+	pthread_mutex_lock(&philo->l_stick);
+	print_message("has taken a fork", philo);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->last_meal_time = miliseconds_time();
 	current_time = miliseconds_time();
 	philo->number_eaten++;
 	print_message("is eating", philo);
 	//printf("Philo %d updated last_meal_time to %lu\n", philo->philo_id, philo->last_meal_time);
+	pthread_mutex_unlock(&philo->r_stick);
+	pthread_mutex_unlock(&philo->l_stick);
 	pthread_mutex_unlock(philo->meal_lock);
 	while (current_time - philo->last_meal_time < philo->time_eat)
 	{
