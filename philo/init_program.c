@@ -6,7 +6,7 @@
 /*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/01 20:24:04 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/04/01 20:30:18 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,8 @@ int	assign_sticks(t_program *program)
 
 	i = 0;
 	philo_array = program->philo_array;
+	if (program->number_philo == 1)
+		return(SUCCESS);
 	while (i < program->number_philo)
 	{
 		if (i == program->number_philo - 1)
