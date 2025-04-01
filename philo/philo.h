@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/31 21:32:50 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/01 18:55:22 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_philo
 	uint16_t		time_sleep;
 	uint64_t		start_time;
 	uint64_t		last_meal_time;
+	uint64_t		last_sleep_time;
 	pthread_mutex_t	*dead_lock;
 	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*write_lock;

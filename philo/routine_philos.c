@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine_philos.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/31 21:42:23 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/01 18:57:28 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,32 +24,54 @@ void	*philo_routine(void *param)
 	i = 0;
 	while (waiter_allows(philo))
 	{
-		eat(philo);
-		sleepy(philo);
-		think(philo);
+		if (waiter_allows(philo))
+			eat(philo);
+		if (waiter_allows(philo))
+			sleepy(philo);
+		if (waiter_allows(philo))
+			think(philo);
 		i++;
 	}
-	print_message("finished routine", philo);
+	//print_message("finished routine", philo);
 	return (param);
 }
 
 // Eat routine
 void	eat(t_philo *philo)
 {
+	uint64_t	current_time;
+
 	pthread_mutex_lock(philo->meal_lock);
 	philo->last_meal_time = miliseconds_time();
+	current_time = miliseconds_time();
 	philo->number_eaten++;
 	print_message("is eating", philo);
 	//printf("Philo %d updated last_meal_time to %lu\n", philo->philo_id, philo->last_meal_time);
 	pthread_mutex_unlock(philo->meal_lock);
-	usleep(philo->time_eat * 1000);
+	while (current_time - philo->last_meal_time < philo->time_eat)
+	{
+		current_time = miliseconds_time();
+		if (!waiter_allows(philo))
+			break ;
+		usleep(1000);
+	}
 }
 
 // Sleep routine
 void	sleepy(t_philo *philo)
 {
+	uint64_t	current_time;
+
 	print_message("is sleeping", philo);
-	usleep(philo->time_sleep * 1000);
+	philo->last_sleep_time = miliseconds_time();
+	current_time = miliseconds_time();
+	while (current_time - philo->last_sleep_time < philo->time_sleep)
+	{
+		current_time = miliseconds_time();
+		if (!waiter_allows(philo))
+			break ;
+		usleep(1000);
+	}
 }
 
 // Think Routine
