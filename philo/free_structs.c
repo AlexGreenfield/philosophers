@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_structs.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:42:41 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/01 19:53:24 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/04/03 18:51:46 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,27 @@ int	free_structs(t_program *program, int flag)
 	i = 0;
 	if (program)
 	{
+		i = 0;
 		if (program->philo_array)
 		{
 			while (i < program->number_philo)
 			{
-				if (pthread_mutex_destroy(&program->philo_array[i]->r_stick)
-					!= SUCCESS)
-					printf("Error freeing %d L stick mutex\n", i);
 				free(program->philo_array[i]);
 				i++;
 			}
 			free(program->philo_array);
 			program->philo_array = NULL;
+		}
+		if (program->stick_lock)
+		{
+			while (i < program->number_philo)
+			{
+				if (pthread_mutex_destroy(&program->stick_lock[i]) != SUCCESS)
+					printf("Error destroying stick %d\n", i);
+				i++;
+			}
+			free(program->stick_lock);
+			program->stick_lock = NULL;
 		}
 		if (pthread_mutex_destroy(&program->dead_lock) != SUCCESS)
 			printf("Error freeing dead mutex\n");

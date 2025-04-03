@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/01 20:07:53 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/04/03 18:01:07 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct s_philo
 	int				dead;
 	int				number_eat;
 	int				number_eaten;
+	int				number_philo;
 	int				*philo_dead;
 	int				*philo_eated;
 	uint64_t		time_die;
@@ -44,8 +45,8 @@ typedef struct s_philo
 	uint64_t		start_time;
 	uint64_t		last_meal_time;
 	uint64_t		last_sleep_time;
-	pthread_mutex_t	r_stick;
-	pthread_mutex_t	l_stick;
+	pthread_mutex_t	*r_stick;
+	pthread_mutex_t	*l_stick;
 	pthread_mutex_t	*dead_lock;
 	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*write_lock;
@@ -65,6 +66,7 @@ typedef struct s_program
 	pthread_mutex_t	dead_lock;
 	pthread_mutex_t	meal_lock;
 	pthread_mutex_t	write_lock;
+	pthread_mutex_t	*stick_lock;
 	pthread_t		waiter;
 	t_philo			**philo_array;
 }	t_program;
@@ -92,6 +94,7 @@ int			init_program_data(char **argv, t_program *program);
 int			init_program(char **argv, t_program *program);
 int			init_philos_array(t_program *program);
 int			init_philos_data(t_program *program);
+int			init_sticks(t_program *program);
 int			assign_sticks(t_program *program);
 
 // Routines

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:55:13 by alejandro         #+#    #+#             */
-/*   Updated: 2025/03/31 21:04:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/03 20:07:52 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	print_message(char *str, t_philo *philo)
 {
 	uint64_t	current_time;
 
-	current_time = miliseconds_time() - philo->start_time;
 	pthread_mutex_lock(philo->write_lock);
+	current_time = miliseconds_time() - philo->start_time;
 	printf("%lu %d %s\n", current_time, philo->philo_id, str);
 	pthread_mutex_unlock(philo->write_lock);
 }

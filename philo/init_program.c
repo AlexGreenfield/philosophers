@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_program.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:25:08 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/01 20:30:18 by acastrov         ###   ########.fr       */
+/*   Updated: 2025/04/03 18:18:11 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ int	init_program(char **argv, t_program *program)
 		return (MALLOC_ERROR);
 	if (init_philos_data(program) != SUCCESS)
 		return (MALLOC_ERROR);
+	if (init_sticks(program) != SUCCESS)
+		return (THREAD_ERROR);
 	assign_sticks(program);
 	return (SUCCESS);
 }
@@ -30,7 +32,6 @@ int	init_program_data(char **argv, t_program *program)
 {
 	program->number_philo = ft_atoi(argv[1]);
 	program->time_die = ft_atoi(argv[2]);
-	printf("Time to die is %lu\n", program->time_die);
 	usleep(10000);
 	program->time_eat = ft_atoi(argv[3]);
 	program->time_sleep = ft_atoi(argv[4]);
@@ -86,6 +87,7 @@ int	init_philos_data(t_program *program)
 	{
 		program->philo_array[i]->philo_id = i + 1;
 		program->philo_array[i]->dead = 0;
+		program->philo_array[i]->number_philo = program->number_philo;
 		program->philo_array[i]->philo_dead = &program->philo_dead;
 		program->philo_array[i]->number_eat = program->number_eat;
 		program->philo_array[i]->number_eaten = 0;
@@ -98,8 +100,23 @@ int	init_philos_data(t_program *program)
 		program->philo_array[i]->dead_lock = &program->dead_lock;
 		program->philo_array[i]->meal_lock = &program->meal_lock;
 		program->philo_array[i]->write_lock = &program->write_lock;
-		if (pthread_mutex_init(&program->philo_array[i]->r_stick,
-				NULL) != SUCCESS)
+		i++;
+	}
+	return (SUCCESS);
+}
+
+// Init shared stick mutex
+int	init_sticks(t_program *program)
+{
+	int	i;
+	
+	program->stick_lock = malloc(sizeof(pthread_mutex_t) * program->number_philo);
+	if (!program->stick_lock)
+		return (MALLOC_ERROR);
+	i = 0;
+	while (i < program->number_philo)
+	{
+		if (pthread_mutex_init(&program->stick_lock[i], NULL) != SUCCESS)
 			return (THREAD_ERROR);
 		i++;
 	}
@@ -115,13 +132,22 @@ int	assign_sticks(t_program *program)
 	i = 0;
 	philo_array = program->philo_array;
 	if (program->number_philo == 1)
-		return(SUCCESS);
+	{
+		philo_array[0]->r_stick = &program->stick_lock[0];
+			return(SUCCESS);
+	}
+	while (i < program->number_philo)
+	{
+		philo_array[i]->r_stick = &program->stick_lock[i];
+		i++;
+	}
+	i = 0;
 	while (i < program->number_philo)
 	{
 		if (i == program->number_philo - 1)
-			philo_array[i]->l_stick = philo_array[0]->r_stick;
+			philo_array[i]->l_stick = &program->stick_lock[0];
 		else
-			philo_array[i]->l_stick = philo_array[i + 1]->r_stick;
+			philo_array[i]->l_stick = &program->stick_lock[i + 1];
 		i++;
 	}
 	return (SUCCESS);
