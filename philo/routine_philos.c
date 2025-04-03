@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/03 20:12:44 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/03 21:50:48 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*philo_routine(void *param)
 
 	philo = (t_philo *)param;
 	if (philo->philo_id % 2 != 0)
-		usleep(10000);
+		usleep(1000);
 	i = 0;
 	while (waiter_allows(philo))
 	{
@@ -32,7 +32,6 @@ void	*philo_routine(void *param)
 			think(philo);
 		i++;
 	}
-	//print_message("finished routine", philo);
 	return (param);
 }
 
@@ -41,33 +40,27 @@ void	eat(t_philo *philo)
 {
 	uint64_t	current_time;
 
-	if (waiter_allows(philo))
-	{
-		pthread_mutex_lock(philo->r_stick);
-		print_message("has taken R fork", philo);
-	}
+	pthread_mutex_lock(philo->r_stick);
+	print_message("has taken a fork", philo);
 	if (philo->number_philo == 1)
 	{
 		usleep(philo->time_die * 1000);
 		pthread_mutex_unlock(philo->r_stick);
 		return ;
 	}
-	if (waiter_allows(philo))
-	{
 	pthread_mutex_lock(philo->l_stick);
-	print_message("has taken L fork", philo);
-	}
+	print_message("has taken a fork", philo);
 	pthread_mutex_lock(philo->meal_lock);
 	philo->last_meal_time = miliseconds_time();
 	philo->number_eaten++;
 	current_time = miliseconds_time();
 	pthread_mutex_unlock(philo->meal_lock);
-	if (!waiter_allows(philo))
-	{
-		pthread_mutex_unlock(philo->l_stick);
-		pthread_mutex_unlock(philo->r_stick);
-		return ;
-	}
+	//if (!waiter_allows(philo))
+	//{
+		//pthread_mutex_unlock(philo->l_stick);
+		//pthread_mutex_unlock(philo->r_stick);
+		//return ;
+	//}
 	print_message("is eating", philo);
 	while (current_time - philo->last_meal_time < philo->time_eat)
 	{
@@ -78,7 +71,7 @@ void	eat(t_philo *philo)
 			pthread_mutex_unlock(philo->r_stick);
 			break ;
 		}
-		usleep(1000);
+		usleep(100);
 	}
 	pthread_mutex_unlock(philo->l_stick);
 	pthread_mutex_unlock(philo->r_stick);
@@ -97,7 +90,7 @@ void	sleepy(t_philo *philo)
 		current_time = miliseconds_time();
 		if (!waiter_allows(philo))
 			break ;
-		usleep(1000);
+		usleep(100);
 	}
 }
 

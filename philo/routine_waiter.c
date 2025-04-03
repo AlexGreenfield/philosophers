@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/03 20:14:45 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/03 21:53:04 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	*waiter_routine(void *param)
 	program = param;
 	while (1)
 	{
-		usleep(1000);
+		usleep(1);
 		if ((dead_philo(program) == SUCCESS))
 			break ;
 		if ((program->number_eat >= 0 && all_eated(program) == SUCCESS))
@@ -48,13 +48,16 @@ int	dead_philo(t_program *program)
 		{
 			pthread_mutex_lock(&program->dead_lock);
 			program->philo_dead = 1;
+			//printf("Last meal was %lu\n", program->philo_array[i]->last_meal_time);
+			//printf("Absolute time is %lu\n", miliseconds_time());
+			//printf("Time check is %lu\n", starved);
 			pthread_mutex_unlock(&program->dead_lock);
 			print_message("died", program->philo_array[i]);
-			return (SUCCESS) ;
+			return (SUCCESS);
 		}
 		i++;
-	}
-	return (1);
+	} 
+	return (1); 
 }
 
 // Checks if all philo have eated

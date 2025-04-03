@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:55:13 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/03 20:07:52 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/03 20:33:49 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	print_message(char *str, t_philo *philo)
 uint64_t	miliseconds_time(void)
 {
 	struct timeval	current_time;
-	__uint64_t		miliseconds;
+	uint64_t		miliseconds;
 
 	if (gettimeofday(&current_time, NULL) == -1)
 		return (1);
