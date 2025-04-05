@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:42:41 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/03 18:51:46 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/05 20:00:27 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	free_structs(t_program *program, int flag)
 		{
 			while (i < program->number_philo)
 			{
+				if (pthread_mutex_destroy(&program->philo_array[i]->meal_lock) != SUCCESS)
+					printf("Error freeing meal mutex philo %d\n", i);
 				free(program->philo_array[i]);
 				i++;
 			}
@@ -44,8 +46,8 @@ int	free_structs(t_program *program, int flag)
 		}
 		if (pthread_mutex_destroy(&program->dead_lock) != SUCCESS)
 			printf("Error freeing dead mutex\n");
-		if (pthread_mutex_destroy(&program->meal_lock) != SUCCESS)
-			printf("Error freeing meal mutex\n");
+		//if (pthread_mutex_destroy(&program->meal_lock) != SUCCESS)
+			//printf("Error freeing meal mutex\n");
 		if (pthread_mutex_destroy(&program->write_lock) != SUCCESS)
 			printf("Error freeing write mutex\n");
 		free (program);

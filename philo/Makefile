@@ -18,7 +18,7 @@ OBJS = $(SRCS:.c=.o)
 
 # Compilation
 CC = cc
-CFLAGS = -Werror -Wextra -Wall -g3
+CFLAGS = -Werror -Wextra -Wall -g
 
 # Colors for Makefile output
 RED    = \033[0;31m

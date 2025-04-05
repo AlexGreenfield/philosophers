@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/03 21:50:48 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/05 20:56:31 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@ void	*philo_routine(void *param)
 	philo = (t_philo *)param;
 	if (philo->philo_id % 2 != 0)
 		usleep(1000);
+	philo->start_time = miliseconds_time();
+	philo->last_meal_time = miliseconds_time();
 	i = 0;
+	print_message("Launched", philo);
+	printf("Absolute time is %lu\n", miliseconds_time());
 	while (waiter_allows(philo))
 	{
 		if (waiter_allows(philo))
@@ -39,22 +43,36 @@ void	*philo_routine(void *param)
 void	eat(t_philo *philo)
 {
 	uint64_t	current_time;
-
-	pthread_mutex_lock(philo->r_stick);
-	print_message("has taken a fork", philo);
+	
+	if (waiter_allows(philo))
+		pthread_mutex_lock(philo->r_stick);
+	else
+		return ;
 	if (philo->number_philo == 1)
 	{
 		usleep(philo->time_die * 1000);
 		pthread_mutex_unlock(philo->r_stick);
 		return ;
 	}
+	if (!waiter_allows(philo))
+	{
+		pthread_mutex_unlock(philo->r_stick);
+		return ;
+	}
+	print_message("has taken R fork", philo);
 	pthread_mutex_lock(philo->l_stick);
-	print_message("has taken a fork", philo);
-	pthread_mutex_lock(philo->meal_lock);
+	if (!waiter_allows(philo))
+	{
+		pthread_mutex_unlock(philo->l_stick);
+		pthread_mutex_unlock(philo->r_stick);
+		return ;
+	}
+	pthread_mutex_lock(&philo->meal_lock); // Individual for each philo
 	philo->last_meal_time = miliseconds_time();
 	philo->number_eaten++;
 	current_time = miliseconds_time();
-	pthread_mutex_unlock(philo->meal_lock);
+	pthread_mutex_unlock(&philo->meal_lock);
+	print_message("has taken L fork", philo);
 	//if (!waiter_allows(philo))
 	//{
 		//pthread_mutex_unlock(philo->l_stick);
@@ -106,10 +124,10 @@ int	waiter_allows(t_philo *philo)
 	int	flag;
 
 	flag = 0;
-	pthread_mutex_lock(philo->meal_lock);
+	pthread_mutex_lock(philo->eated_lock);
 	if (*philo->philo_eated == 1)
 		flag = 1;
-	pthread_mutex_unlock(philo->meal_lock);
+	pthread_mutex_unlock(philo->eated_lock);
 	pthread_mutex_lock(philo->dead_lock);
 	if (*philo->philo_dead == 1)
 		flag = 1;
