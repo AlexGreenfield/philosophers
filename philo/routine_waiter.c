@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/03 21:53:04 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/05 21:33:40 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,14 @@ void	*waiter_routine(void *param)
 	program = param;
 	while (1)
 	{
-		usleep(1);
+		usleep(100);
 		if ((dead_philo(program) == SUCCESS))
 			break ;
 		if ((program->number_eat >= 0 && all_eated(program) == SUCCESS))
 			break ;
 		i++;
 	}
+	printf("waiter ended\n");
 	return (param);
 }
 
@@ -41,18 +42,27 @@ int	dead_philo(t_program *program)
 	i = 0;
 	while (i < program->number_philo)
 	{
-		pthread_mutex_lock(&program->meal_lock);
-		starved = miliseconds_time() - program->philo_array[i]->last_meal_time;
-		pthread_mutex_unlock(&program->meal_lock);
+		pthread_mutex_lock(&program->philo_array[i]->meal_lock);
+		if (program->philo_array[i]->last_meal_time == 0)
+			starved = 0 ;
+		else
+			starved = miliseconds_time() - program->philo_array[i]->last_meal_time;
+		pthread_mutex_unlock(&program->philo_array[i]->meal_lock);
 		if (starved > program->time_die)
 		{
 			pthread_mutex_lock(&program->dead_lock);
 			program->philo_dead = 1;
 			//printf("Last meal was %lu\n", program->philo_array[i]->last_meal_time);
 			//printf("Absolute time is %lu\n", miliseconds_time());
+			/*
+				if (condicion)
+					lock();
+					if (!condicion)
+						unlock();
+			*/
 			//printf("Time check is %lu\n", starved);
-			pthread_mutex_unlock(&program->dead_lock);
 			print_message("died", program->philo_array[i]);
+			pthread_mutex_unlock(&program->dead_lock);
 			return (SUCCESS);
 		}
 		i++;
@@ -70,19 +80,18 @@ int	all_eated(t_program *program)
 	eated = 0;
 	while (i < program->number_philo)
 	{
-		pthread_mutex_lock(&program->meal_lock);
-		if (program->philo_array[i]->number_eaten == program->number_eat)
+		pthread_mutex_lock(&program->philo_array[i]->meal_lock);
+		if (program->philo_array[i]->number_eaten >= program->number_eat)
 			eated++;
-		pthread_mutex_unlock(&program->meal_lock);
+		pthread_mutex_unlock(&program->philo_array[i]->meal_lock);
 		i++;
 	}
-	if (eated == program->number_philo)
+	printf("%d philos have eated\n", eated);
+	if (eated >= program->number_philo)
 	{
-		pthread_mutex_lock(&program->meal_lock);
+		pthread_mutex_lock(&program->eated_lock);
 		program->philo_eated = 1;
-		pthread_mutex_unlock(&program->meal_lock);
-		pthread_mutex_lock(&program->write_lock);
-		pthread_mutex_unlock(&program->write_lock);
+		pthread_mutex_unlock(&program->eated_lock);
 		return (SUCCESS);
 	}
 	return (1);
