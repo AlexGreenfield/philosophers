@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/05 20:07:33 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/07 23:36:08 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,13 +106,21 @@ int			init_routines(t_program *program);
 int			launch_threads(t_program *program);
 int			join_threads(t_program *program);
 
-// Philo routine
+// Philo routine global
 
 void		*philo_routine(void *param);
-void		eat(t_philo *philo);
 void		sleepy(t_philo *philo);
 void		think(t_philo *philo);
 int			waiter_allows(t_philo *philo);
+
+// Philo routine eat
+void		eat(t_philo *philo);
+int			pick_f_stick(t_philo *philo, pthread_mutex_t *f_s);
+int			pick_s_stick(t_philo *philo, pthread_mutex_t *f_s, pthread_mutex_t *s_s);
+int			start_eating(t_philo *philo, pthread_mutex_t *f_s, pthread_mutex_t *s_s);
+void		eat_time(t_philo *philo, uint64_t current_time);
+
+//void		drop_sticks(t_philo *philo, uint64_t current_time, int flag);
 
 // Waiter routine
 

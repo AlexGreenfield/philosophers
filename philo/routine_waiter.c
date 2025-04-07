@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/05 21:33:40 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/07 17:58:54 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	*waiter_routine(void *param)
 			break ;
 		i++;
 	}
-	printf("waiter ended\n");
 	return (param);
 }
 
@@ -52,15 +51,6 @@ int	dead_philo(t_program *program)
 		{
 			pthread_mutex_lock(&program->dead_lock);
 			program->philo_dead = 1;
-			//printf("Last meal was %lu\n", program->philo_array[i]->last_meal_time);
-			//printf("Absolute time is %lu\n", miliseconds_time());
-			/*
-				if (condicion)
-					lock();
-					if (!condicion)
-						unlock();
-			*/
-			//printf("Time check is %lu\n", starved);
 			print_message("died", program->philo_array[i]);
 			pthread_mutex_unlock(&program->dead_lock);
 			return (SUCCESS);
@@ -86,7 +76,6 @@ int	all_eated(t_program *program)
 		pthread_mutex_unlock(&program->philo_array[i]->meal_lock);
 		i++;
 	}
-	printf("%d philos have eated\n", eated);
 	if (eated >= program->number_philo)
 	{
 		pthread_mutex_lock(&program->eated_lock);
