@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/07 17:58:54 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/08 00:16:07 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	dead_philo(t_program *program)
 			return (SUCCESS);
 		}
 		i++;
-	} 
-	return (1); 
+	}
+	return (1);
 }
 
 // Checks if all philo have eated

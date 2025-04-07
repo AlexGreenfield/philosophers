@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/07 23:37:42 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/08 00:10:43 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,10 @@ void	*philo_routine(void *param)
 	t_philo	*philo;
 
 	philo = (t_philo *)param;
-
-	// Launch at the same time
-	
 	philo->start_time = miliseconds_time();
 	pthread_mutex_lock(&philo->meal_lock);
 	philo->last_meal_time = miliseconds_time();
 	pthread_mutex_unlock(&philo->meal_lock);
-	//if (philo->philo_id % 2 != 0)
-		//usleep(100000);
 	i = 0;
 	while (waiter_allows(philo))
 	{
@@ -41,71 +36,6 @@ void	*philo_routine(void *param)
 	}
 	return (param);
 }
-
-// Eat routine
-//void	eat(t_philo *philo)
-//{
-	//uint64_t	current_time;
-	
-	//if (waiter_allows(philo))
-		//pthread_mutex_lock(philo->r_stick);
-	//else
-		//return ;
-	//if (philo->number_philo == 1)
-	//{
-		//usleep(philo->time_die * 1000);
-		//pthread_mutex_unlock(philo->r_stick);
-		//return ;
-	//}
-	//if (!waiter_allows(philo))
-	//{
-		//pthread_mutex_unlock(philo->r_stick);
-		//return ;
-	//}
-	//print_message("has taken R fork", philo);
-	//if (waiter_allows(philo))
-	//{
-		//pthread_mutex_lock(philo->l_stick);
-		//print_message("has taken L fork", philo);
-	//}
-	//else
-	//{
-		//pthread_mutex_unlock(philo->r_stick);
-		//return ;
-	//}
-	//if (!waiter_allows(philo))
-	//{
-		//pthread_mutex_unlock(philo->l_stick);
-		//pthread_mutex_unlock(philo->r_stick);
-		//return ;
-	//}
-	//pthread_mutex_lock(&philo->meal_lock); // Individual for each philo
-	//if (!waiter_allows(philo))
-	//{
-		//pthread_mutex_unlock(philo->l_stick);
-		//pthread_mutex_unlock(philo->r_stick);
-		//pthread_mutex_unlock(&philo->meal_lock);
-		//return ;
-	//}
-	//philo->last_meal_time = miliseconds_time();
-	//philo->number_eaten++;
-	//current_time = miliseconds_time();
-	//pthread_mutex_unlock(&philo->meal_lock);
-	//print_message("is eating", philo);
-	//while (current_time - philo->last_meal_time < philo->time_eat)
-	//{
-		//current_time = miliseconds_time();
-		//if (!waiter_allows(philo))
-		//{
-			//pthread_mutex_unlock(philo->l_stick);
-			//pthread_mutex_unlock(philo->r_stick);
-			//break ;
-		//}
-		//usleep(100);
-	//}
-	//pthread_mutex_unlock(philo->l_stick);
-	//pthread_mutex_unlock(philo->r_stick);
-//}
 
 // Sleep routine
 void	sleepy(t_philo *philo)

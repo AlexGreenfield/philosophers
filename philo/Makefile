@@ -9,6 +9,7 @@ SRCS = philo.c \
 	utils_routine.c \
 	utils_args.c \
 	init_program.c \
+	init_philos.c \
 	init_routines.c \
 	routine_waiter.c \
 	routine_philos.c \
