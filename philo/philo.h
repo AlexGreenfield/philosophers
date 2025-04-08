@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/07 23:36:08 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/08 19:35:50 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ typedef struct s_program
 	uint16_t		time_sleep;
 	uint64_t		start_time;
 	pthread_mutex_t	dead_lock;
-	//pthread_mutex_t	meal_lock;
 	pthread_mutex_t	eated_lock;
 	pthread_mutex_t	write_lock;
 	pthread_mutex_t	*stick_lock;
@@ -116,8 +115,10 @@ int			waiter_allows(t_philo *philo);
 // Philo routine eat
 void		eat(t_philo *philo);
 int			pick_f_stick(t_philo *philo, pthread_mutex_t *f_s);
-int			pick_s_stick(t_philo *philo, pthread_mutex_t *f_s, pthread_mutex_t *s_s);
-int			start_eating(t_philo *philo, pthread_mutex_t *f_s, pthread_mutex_t *s_s);
+int			pick_s_stick(t_philo *philo, pthread_mutex_t *f_s,
+				pthread_mutex_t *s_s);
+int			start_eating(t_philo *philo, pthread_mutex_t *f_s,
+				pthread_mutex_t *s_s);
 void		eat_time(t_philo *philo, uint64_t current_time);
 
 //void		drop_sticks(t_philo *philo, uint64_t current_time, int flag);
@@ -131,5 +132,8 @@ int			all_eated(t_program *program);
 // Free
 
 int			free_structs(t_program *program, int flag);
+int			free_philo_array(t_program *program);
+int			free_mutex_sticks(t_program *program);
+int			free_mutex_dead_write(t_program *program);
 
 #endif

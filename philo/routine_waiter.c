@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 20:08:30 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/08 00:16:07 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/08 19:38:07 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ int	dead_philo(t_program *program)
 		if (program->philo_array[i]->last_meal_time == 0)
 			starved = 0 ;
 		else
-			starved = miliseconds_time() - program->philo_array[i]->last_meal_time;
+			starved = miliseconds_time()
+				- program->philo_array[i]->last_meal_time;
 		pthread_mutex_unlock(&program->philo_array[i]->meal_lock);
 		if (starved > program->time_die)
 		{

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 18:11:15 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/08 00:15:25 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/08 19:47:09 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,15 @@ int	pick_f_stick(t_philo *philo, pthread_mutex_t *f_s)
 	}
 	if (philo->number_philo == 1)
 	{
-		usleep(philo->time_die * 1000);
-		pthread_mutex_unlock(f_s);
-		return (1);
+		while (1)
+		{
+			if (!waiter_allows(philo))
+			{
+				pthread_mutex_unlock(f_s);
+				return (1);
+			}
+			usleep(10000);
+		}
 	}
 	return (SUCCESS);
 }
