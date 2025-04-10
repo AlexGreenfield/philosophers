@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine_philos.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 21:24:59 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/08 20:02:58 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/10 19:14:41 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	*philo_routine(void *param)
 	t_philo	*philo;
 
 	philo = (t_philo *)param;
-	philo->start_time = miliseconds_time();
 	pthread_mutex_lock(&philo->meal_lock);
 	philo->last_meal_time = miliseconds_time();
 	pthread_mutex_unlock(&philo->meal_lock);

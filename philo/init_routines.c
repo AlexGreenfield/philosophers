@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_routines.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 19:34:51 by acastrov          #+#    #+#             */
-/*   Updated: 2025/04/05 19:39:33 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/10 19:13:45 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	launch_threads(t_program *program)
 	t_philo		**philo_array;
 
 	philo_array = program->philo_array;
-	program->start_time = miliseconds_time();
+	assing_start_time(program);
 	if (pthread_create(&program->waiter, NULL,
 			waiter_routine, program) != SUCCESS)
 	{

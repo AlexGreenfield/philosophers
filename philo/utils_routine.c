@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:55:13 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/05 19:36:18 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/10 18:59:34 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,19 @@ void	print_message(char *str, t_philo *philo)
 	current_time = miliseconds_time() - philo->start_time;
 	printf("%lu %d %s\n", current_time, philo->philo_id, str);
 	pthread_mutex_unlock(philo->write_lock);
+}
+
+void	assing_start_time(t_program *program)
+{
+	int	i;
+
+	i = 0;
+	program->start_time = miliseconds_time();
+	while (i < program->number_philo)
+	{
+		program->philo_array[i]->start_time = program->start_time;
+		i++;
+	}
 }
 
 // Gets EPOCH time in miniseconds, uses uint64_t

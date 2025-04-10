@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: acastrov <acastrov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 17:45:02 by alejandro         #+#    #+#             */
-/*   Updated: 2025/04/08 19:35:50 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/04/10 19:22:49 by acastrov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int			ft_isdigit(int c);
 // Routine utils
 void		print_message(char *str, t_philo *philo);
 uint64_t	miliseconds_time(void);
+void		assing_start_time(t_program *program);
 
 // Init philo
 
